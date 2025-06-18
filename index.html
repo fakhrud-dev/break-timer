@@ -117,6 +117,11 @@
             position: relative;
             z-index: 2;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            transition: font-size 0.3s ease;
+        }
+        
+        .timer.long-duration {
+            font-size: 3.5rem;
         }
         
         /* 
@@ -335,8 +340,13 @@
         */
         @media (max-width: 480px) {
             .timer {
-                font-size: 3.5rem;
+                font-size: 3rem;
             }
+            
+            .timer.long-duration {
+                font-size: 2.2rem;
+            }
+            
             .controls {
                 flex-direction: column;
                 align-items: center;
@@ -372,7 +382,7 @@
             <div class="settings-panel" id="settings-panel">
                 <div class="form-group">
                     <label for="pomodoro-time">Work Time (minutes)</label>
-                    <input type="number" id="pomodoro-time" min="1" max="60" value="25">
+                    <input type="number" id="pomodoro-time" min="1" max="240" value="25">
                 </div>
                 <div class="form-group">
                     <label for="short-break-time">Short Break (minutes)</label>
@@ -380,7 +390,7 @@
                 </div>
                 <div class="form-group">
                     <label for="long-break-time">Long Break (minutes)</label>
-                    <input type="number" id="long-break-time" min="1" max="60" value="15">
+                    <input type="number" id="long-break-time" min="1" max="120" value="15">
                 </div>
                 <button class="save-btn" id="save-settings-btn">Save Settings</button>
             </div>
@@ -516,6 +526,21 @@
         }
 
         // =============================================
+        // FUNGSI FORMAT WAKTU (HANDLE JAM DAN MENIT)
+        // =============================================
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            
+            if (hours > 0) {
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            } else {
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // =============================================
         // FUNGSI TOGGLE TIMER (START/PAUSE)
         // =============================================
         function toggleTimer() {
@@ -599,6 +624,13 @@
                     break;
             }
 
+            // Update class untuk timer panjang
+            if (timeLeft >= 3600) {
+                timerDisplay.classList.add('long-duration');
+            } else {
+                timerDisplay.classList.remove('long-duration');
+            }
+
             updateTimerDisplay();
 
             // Reset state timer
@@ -659,9 +691,14 @@
         // FUNGSI UPDATE TAMPILAN TIMER
         // =============================================
         function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerDisplay.textContent = formatTime(timeLeft);
+            
+            // Sesuaikan ukuran font berdasarkan panjang teks
+            if (timeLeft >= 3600) { // Jika lebih dari 1 jam
+                timerDisplay.style.fontSize = '3.5rem';
+            } else {
+                timerDisplay.style.fontSize = '5rem';
+            }
         }
 
         // =============================================

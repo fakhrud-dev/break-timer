@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Break Time - Pomodoro Timer</title>
+    <style>
+         :root {
+            --primary-color: #2b5876;
+            --secondary-color: #4e4376;
+            --dark-color: #1a1a2e;
+            --light-color: #16213e;
+            --accent-color: #f9a828;
+            --text-color: #e6e6e6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body { 
+            background-color: var(--light-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.5s ease;
+            background-image: linear-gradient(to right top, #16213e, #1a1a2e);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-color: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            gap: 10px;
+        }
+        
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .mode-btn.active {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            box-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
+        }
+        
+        .timer-container {
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        
+        .timer {
+            font-size: 5rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: var(--text-color);
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            box-shadow: 0 4px 0 rgba(201, 134, 24, 0.8);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(201, 134, 24, 0.8);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(201, 134, 24, 0.8);
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .settings {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .settings-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .settings-panel {
+            display: none;
+            margin-top: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .settings-panel.show {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+        
+        .save-btn {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal {
+            background-color: var(--dark-color);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(249, 168, 40, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+        
+        .modal h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .modal p {
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        .modal-btn {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .coffee-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: sway 3s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+        
+        @keyframes sway {
+            0%,
+            100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        /* Work mode styling */
+        
+        body.work-mode {
+            background-image: linear-gradient(to right top, #16213e, #1a1a2e);
+        }
+        /* Break mode styling */
+        
+        body.break-mode {
+            background-image: linear-gradient(to right top, #1a2a3a, #0f1a23);
+        }
+        /* Responsive adjustments */
+        
+        @media (max-width: 480px) {
+            .timer {
+                font-size: 3.5rem;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="work-mode">
+    <div class="container">
+        <h1>Break Time</h1>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" id="pomodoro-btn">Work</button>
+            <button class="mode-btn" id="short-break-btn">Short Break</button>
+            <button class="mode-btn" id="long-break-btn">Long Break</button>
+        </div>
+
+        <div class="timer-container">
+            <div class="timer" id="timer">25:00</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="start-btn">Start</button>
+            <button class="btn btn-secondary" id="reset-btn" disabled>Reset</button>
+        </div>
+
+        <div class="settings">
+            <button class="settings-btn" id="settings-btn">⚙️</button>
+            <div class="settings-panel" id="settings-panel">
+                <div class="form-group">
+                    <label for="pomodoro-time">Work Time (minutes)</label>
+                    <input type="number" id="pomodoro-time" min="1" max="60" value="25">
+                </div>
+                <div class="form-group">
+                    <label for="short-break-time">Short Break (minutes)</label>
+                    <input type="number" id="short-break-time" min="1" max="30" value="5">
+                </div>
+                <div class="form-group">
+                    <label for="long-break-time">Long Break (minutes)</label>
+                    <input type="number" id="long-break-time" min="1" max="60" value="15">
+                </div>
+                <button class="save-btn" id="save-settings-btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="coffee-icon">☕</div>
+            <h2>Ngopi Dulu Bro!</h2>
+            <p id="random-quote">"Take a break to sharpen your axe."</p>
+            <button class="modal-btn" id="modal-btn">Lanjut!</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const pomodoroBtn = document.getElementById('pomodoro-btn');
+        const shortBreakBtn = document.getElementById('short-break-btn');
+        const longBreakBtn = document.getElementById('long-break-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsPanel = document.getElementById('settings-panel');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const pomodoroTimeInput = document.getElementById('pomodoro-time');
+        const shortBreakTimeInput = document.getElementById('short-break-time');
+        const longBreakTimeInput = document.getElementById('long-break-time');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalBtn = document.getElementById('modal-btn');
+        const randomQuoteElement = document.getElementById('random-quote');
+        const body = document.body;
+
+        // Timer variables
+        let timer;
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let isRunning = false;
+        let currentMode = 'pomodoro'; // 'pomodoro', 'shortBreak', 'longBreak'
+        let pomodoroCount = 0;
+
+        // Quotes database
+        const quotes = [
+            "Productivity is never an accident. It's the result of a commitment to excellence.",
+            "Take care of your body. It's the only place you have to live.",
+            "Sometimes the most productive thing you can do is relax.",
+            "Rest when you're weary. Refresh and renew yourself, your body, your mind, your spirit. Then get back to work.",
+            "Almost everything will work again if you unplug it for a few minutes, including you.",
+            "There is virtue in work and there is virtue in rest. Use both and overlook neither.",
+            "The time to relax is when you don't have time for it.",
+            "A good rest is half the work.",
+            "Don't confuse having a career with having a life.",
+            "Take a break to sharpen your axe.",
+            "Coffee first, then conquer the world.",
+            "Hard work is important, but so is taking time to recharge.",
+            "You can't pour from an empty cup. Take care of yourself first.",
+            "Success is getting what you want. Happiness is wanting what you get.",
+            "The key is not to prioritize what's on your schedule, but to schedule your priorities."
+        ];
+
+        // Default settings
+        let settings = {
+            pomodoroTime: 25,
+            shortBreakTime: 5,
+            longBreakTime: 15
+        };
+
+        // Initialize the app
+        function init() {
+            loadSettings();
+            updateTimerDisplay();
+            setupEventListeners();
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('pomodoroSettings');
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+                pomodoroTimeInput.value = settings.pomodoroTime;
+                shortBreakTimeInput.value = settings.shortBreakTime;
+                longBreakTimeInput.value = settings.longBreakTime;
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            settings = {
+                pomodoroTime: parseInt(pomodoroTimeInput.value),
+                shortBreakTime: parseInt(shortBreakTimeInput.value),
+                longBreakTime: parseInt(longBreakTimeInput.value)
+            };
+            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            switchMode(currentMode); // Update timer with new settings
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            startBtn.addEventListener('click', toggleTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            pomodoroBtn.addEventListener('click', () => switchMode('pomodoro'));
+            shortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
+            longBreakBtn.addEventListener('click', () => switchMode('longBreak'));
+            settingsBtn.addEventListener('click', toggleSettings);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            modalBtn.addEventListener('click', closeModal);
+        }
+
+        // Toggle timer between start and pause
+        function toggleTimer() {
+            if (isRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        // Start the timer
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.textContent = 'Pause';
+                resetBtn.disabled = false;
+
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        timerComplete();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Pause the timer
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                isRunning = false;
+                startBtn.textContent = 'Resume';
+            }
+        }
+
+        // Reset the timer
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            startBtn.textContent = 'Start';
+            resetBtn.disabled = true;
+            switchMode(currentMode); // Reset to current mode's initial time
+        }
+
+        // Switch between Pomodoro, Short Break, and Long Break modes
+        function switchMode(mode) {
+            currentMode = mode;
+
+            // Update active button
+            pomodoroBtn.classList.remove('active');
+            shortBreakBtn.classList.remove('active');
+            longBreakBtn.classList.remove('active');
+
+            // Set time based on mode
+            switch (mode) {
+                case 'pomodoro':
+                    timeLeft = settings.pomodoroTime * 60;
+                    pomodoroBtn.classList.add('active');
+                    body.className = 'work-mode';
+                    break;
+                case 'shortBreak':
+                    timeLeft = settings.shortBreakTime * 60;
+                    shortBreakBtn.classList.add('active');
+                    body.className = 'break-mode';
+                    break;
+                case 'longBreak':
+                    timeLeft = settings.longBreakTime * 60;
+                    longBreakBtn.classList.add('active');
+                    body.className = 'break-mode';
+                    break;
+            }
+
+            updateTimerDisplay();
+
+            // Reset timer state
+            clearInterval(timer);
+            isRunning = false;
+            startBtn.textContent = 'Start';
+            resetBtn.disabled = true;
+        }
+
+        // Called when timer completes
+        function timerComplete() {
+            isRunning = false;
+            startBtn.textContent = 'Start';
+            resetBtn.disabled = true;
+
+            // Play sound
+            playSound();
+
+            // Show modal with random quote
+            showModal();
+
+            // Determine next mode
+            if (currentMode === 'pomodoro') {
+                pomodoroCount++;
+            }
+        }
+
+        // Show modal with random quote
+        function showModal() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            randomQuoteElement.textContent = `"${randomQuote}"`;
+            modalOverlay.classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+
+            // Determine next mode after closing modal
+            if (currentMode === 'pomodoro') {
+                if (pomodoroCount % 4 === 0) {
+                    switchMode('longBreak');
+                } else {
+                    switchMode('shortBreak');
+                }
+            } else {
+                switchMode('pomodoro');
+            }
+        }
+
+        // Update the timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Toggle settings panel visibility
+        function toggleSettings() {
+            settingsPanel.classList.toggle('show');
+        }
+
+        // Play sound
+        function playSound() {
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+            audio.play();
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+
+</html>

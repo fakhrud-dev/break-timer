@@ -6,15 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Break Time - Pomodoro Timer</title>
     <style>
-         :root {
+        /* 
+        * VARIABEL CSS UNTUK WARNA DAN TEMA
+        * Menggunakan sistem warna yang modern dengan gradient
+        */
+        :root {
             --primary-color: #2b5876;
             --secondary-color: #4e4376;
             --dark-color: #1a1a2e;
             --light-color: #16213e;
-            --accent-color: #f9a828;
-            --text-color: #e6e6e6;
+            --accent-color: #f9a828;  /* Warna aksen oranye untuk highlight */
+            --text-color: #e6e6e6;    /* Warna teks utama */
         }
         
+        /* RESET CSS DASAR */
         * {
             margin: 0;
             padding: 0;
@@ -22,6 +27,10 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        /* 
+        * STYLE UTAMA BODY
+        * Menggunakan gradient background dan transition untuk efek smooth
+        */
         body { 
             background-color: var(--light-color);
             color: var(--text-color);
@@ -34,6 +43,11 @@
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
         }
         
+        /* 
+        * CONTAINER UTAMA
+        * Menggunakan backdrop-filter untuk efek glassmorphism
+        * Border dan shadow untuk depth
+        */
         .container {
             width: 90%;
             max-width: 500px;
@@ -42,10 +56,11 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             background-color: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);  /* Efek blur modern */
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        /* HEADER UTAMA */
         h1 {
             color: var(--accent-color);
             margin-bottom: 1rem;
@@ -54,6 +69,10 @@
             letter-spacing: 2px;
         }
         
+        /* 
+        * TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
+        * Desain tombol dengan transition dan active state
+        */
         .mode-selector {
             display: flex;
             justify-content: center;
@@ -81,6 +100,10 @@
             box-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
         
+        /* 
+        * TIMER DISPLAY
+        * Font monospace untuk tampilan timer yang konsisten
+        */
         .timer-container {
             position: relative;
             margin: 1.5rem 0;
@@ -89,13 +112,17 @@
         .timer {
             font-size: 5rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', monospace;  /* Font fixed-width */
             color: var(--text-color);
             position: relative;
             z-index: 2;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
         
+        /* 
+        * TOMBOL KONTROL (START/PAUSE/RESET)
+        * Desain tombol dengan efek hover dan active
+        */
         .controls {
             display: flex;
             justify-content: center;
@@ -115,6 +142,7 @@
             letter-spacing: 1px;
         }
         
+        /* Tombol utama (Start/Pause) */
         .btn-primary {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -131,6 +159,7 @@
             box-shadow: 0 2px 0 rgba(201, 134, 24, 0.8);
         }
         
+        /* Tombol sekunder (Reset) */
         .btn-secondary {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
@@ -141,6 +170,7 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
         
+        /* State disabled untuk tombol */
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -148,12 +178,17 @@
             box-shadow: none !important;
         }
         
+        /* 
+        * PANEL SETTINGS
+        * Animasi fadeIn untuk transisi smooth
+        */
         .settings {
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        /* Tombol settings dengan efek rotate */
         .settings-btn {
             background: none;
             border: none;
@@ -167,6 +202,7 @@
             transform: rotate(90deg);
         }
         
+        /* Panel settings yang bisa di-toggle */
         .settings-panel {
             display: none;
             margin-top: 1rem;
@@ -177,6 +213,7 @@
             display: block;
         }
         
+        /* Form group untuk input settings */
         .form-group {
             margin-bottom: 1rem;
             text-align: left;
@@ -198,6 +235,7 @@
             color: var(--text-color);
         }
         
+        /* Tombol save settings */
         .save-btn {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -209,6 +247,10 @@
             margin-top: 0.5rem;
         }
         
+        /* 
+        * MODAL BREAK TIME
+        * Tampilan modal saat timer selesai
+        */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -247,30 +289,7 @@
             transform: scale(1);
         }
         
-        .modal h2 {
-            color: var(--accent-color);
-            margin-bottom: 1rem;
-            font-size: 2rem;
-        }
-        
-        .modal p {
-            margin-bottom: 1.5rem;
-            font-style: italic;
-            line-height: 1.6;
-        }
-        
-        .modal-btn {
-            background-color: var(--accent-color);
-            color: var(--dark-color);
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
+        /* Animasi untuk ikon kopi */
         .coffee-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
@@ -297,18 +316,23 @@
                 opacity: 1;
             }
         }
-        /* Work mode styling */
         
+        /* 
+        * THEME BERDASARKAN MODE
+        * Work mode dan break mode memiliki background berbeda
+        */
         body.work-mode {
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
         }
-        /* Break mode styling */
         
         body.break-mode {
             background-image: linear-gradient(to right top, #1a2a3a, #0f1a23);
         }
-        /* Responsive adjustments */
         
+        /* 
+        * RESPONSIVE DESIGN
+        * Penyesuaian untuk mobile devices
+        */
         @media (max-width: 480px) {
             .timer {
                 font-size: 3.5rem;
@@ -363,6 +387,7 @@
         </div>
     </div>
 
+    <!-- Modal yang muncul saat timer selesai -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal">
             <div class="coffee-icon">☕</div>
@@ -373,7 +398,9 @@
     </div>
 
     <script>
-        // DOM Elements
+        // =============================================
+        // INISIALISASI ELEMEN DOM
+        // =============================================
         const timerDisplay = document.getElementById('timer');
         const startBtn = document.getElementById('start-btn');
         const resetBtn = document.getElementById('reset-btn');
@@ -391,47 +418,57 @@
         const randomQuoteElement = document.getElementById('random-quote');
         const body = document.body;
 
-        // Timer variables
+        // =============================================
+        // VARIABEL UTAMA TIMER
+        // =============================================
         let timer;
-        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let timeLeft = 25 * 60; // 25 menit dalam detik
         let isRunning = false;
         let currentMode = 'pomodoro'; // 'pomodoro', 'shortBreak', 'longBreak'
-        let pomodoroCount = 0;
+        let pomodoroCount = 0; // Menghitung berapa kali pomodoro selesai
 
-        // Quotes database
+        // =============================================
+        // DATABASE QUOTE UNTUK BREAK TIME
+        // =============================================
         const quotes = [
-            "Productivity is never an accident. It's the result of a commitment to excellence.",
-            "Take care of your body. It's the only place you have to live.",
-            "Sometimes the most productive thing you can do is relax.",
-            "Rest when you're weary. Refresh and renew yourself, your body, your mind, your spirit. Then get back to work.",
-            "Almost everything will work again if you unplug it for a few minutes, including you.",
-            "There is virtue in work and there is virtue in rest. Use both and overlook neither.",
-            "The time to relax is when you don't have time for it.",
-            "A good rest is half the work.",
-            "Don't confuse having a career with having a life.",
-            "Take a break to sharpen your axe.",
-            "Coffee first, then conquer the world.",
-            "Hard work is important, but so is taking time to recharge.",
-            "You can't pour from an empty cup. Take care of yourself first.",
-            "Success is getting what you want. Happiness is wanting what you get.",
-            "The key is not to prioritize what's on your schedule, but to schedule your priorities."
+            "Produktivitas bukanlah kebetulan. Itu hasil dari komitmen pada keunggulan.",
+            "Jaga tubuhmu. Itu satu-satunya tempat yang kamu miliki untuk hidup.",
+            "Terkadang hal paling produktif yang bisa kamu lakukan adalah bersantai.",
+            "Istirahatlah saat lelah. Segarkan dan perbarui dirimu, tubuhmu, pikiranmu, semangatmu.",
+            "Hampir semua akan bekerja lagi jika kamu mencabutnya beberapa menit, termasuk dirimu.",
+            "Ada kebajikan dalam bekerja dan ada kebajikan dalam istirahat. Gunakan keduanya.",
+            "Waktu untuk bersantai adalah ketika kamu tidak punya waktu untuk itu.",
+            "Istirahat yang baik adalah setengah dari pekerjaan.",
+            "Jangan bingung antara memiliki karier dengan memiliki kehidupan.",
+            "Istirahatlah untuk mengasah kapakmu.",
+            "Kopi dulu, baru taklukkan dunia.",
+            "Kerja keras itu penting, tapi beristirahat juga penting.",
+            "Kamu tidak bisa menuangkan dari cangkir kosong. Jaga dirimu dulu.",
+            "Kesuksesan adalah mendapatkan apa yang kamu inginkan. Kebahagiaan adalah menginginkan apa yang kamu dapatkan.",
+            "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu."
         ];
 
-        // Default settings
+        // =============================================
+        // PENGATURAN DEFAULT
+        // =============================================
         let settings = {
             pomodoroTime: 25,
             shortBreakTime: 5,
             longBreakTime: 15
         };
 
-        // Initialize the app
+        // =============================================
+        // FUNGSI INISIALISASI APLIKASI
+        // =============================================
         function init() {
             loadSettings();
             updateTimerDisplay();
             setupEventListeners();
         }
 
-        // Load settings from localStorage
+        // =============================================
+        // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
+        // =============================================
         function loadSettings() {
             const savedSettings = localStorage.getItem('pomodoroSettings');
             if (savedSettings) {
@@ -442,18 +479,31 @@
             }
         }
 
-        // Save settings to localStorage
+        // =============================================
+        // FUNGSI SAVE SETTINGS KE LOCALSTORAGE
+        // =============================================
         function saveSettings() {
+            // Validasi input tidak boleh kosong
+            if (!pomodoroTimeInput.value || !shortBreakTimeInput.value || !longBreakTimeInput.value) {
+                showAlert('Harap isi semua field pengaturan!');
+                return;
+            }
+
             settings = {
                 pomodoroTime: parseInt(pomodoroTimeInput.value),
                 shortBreakTime: parseInt(shortBreakTimeInput.value),
                 longBreakTime: parseInt(longBreakTimeInput.value)
             };
             localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
-            switchMode(currentMode); // Update timer with new settings
+            switchMode(currentMode); // Update timer dengan pengaturan baru
+            
+            // Tampilkan notifikasi sukses
+            showAlert('Pengaturan berhasil disimpan!', 'success');
         }
 
-        // Set up event listeners
+        // =============================================
+        // FUNGSI SETUP EVENT LISTENERS
+        // =============================================
         function setupEventListeners() {
             startBtn.addEventListener('click', toggleTimer);
             resetBtn.addEventListener('click', resetTimer);
@@ -465,7 +515,9 @@
             modalBtn.addEventListener('click', closeModal);
         }
 
-        // Toggle timer between start and pause
+        // =============================================
+        // FUNGSI TOGGLE TIMER (START/PAUSE)
+        // =============================================
         function toggleTimer() {
             if (isRunning) {
                 pauseTimer();
@@ -474,7 +526,9 @@
             }
         }
 
-        // Start the timer
+        // =============================================
+        // FUNGSI START TIMER
+        // =============================================
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
@@ -493,7 +547,9 @@
             }
         }
 
-        // Pause the timer
+        // =============================================
+        // FUNGSI PAUSE TIMER
+        // =============================================
         function pauseTimer() {
             if (isRunning) {
                 clearInterval(timer);
@@ -502,25 +558,29 @@
             }
         }
 
-        // Reset the timer
+        // =============================================
+        // FUNGSI RESET TIMER
+        // =============================================
         function resetTimer() {
             clearInterval(timer);
             isRunning = false;
             startBtn.textContent = 'Start';
             resetBtn.disabled = true;
-            switchMode(currentMode); // Reset to current mode's initial time
+            switchMode(currentMode); // Reset ke waktu awal mode saat ini
         }
 
-        // Switch between Pomodoro, Short Break, and Long Break modes
+        // =============================================
+        // FUNGSI SWITCH MODE (WORK/SHORT BREAK/LONG BREAK)
+        // =============================================
         function switchMode(mode) {
             currentMode = mode;
 
-            // Update active button
+            // Update tombol aktif
             pomodoroBtn.classList.remove('active');
             shortBreakBtn.classList.remove('active');
             longBreakBtn.classList.remove('active');
 
-            // Set time based on mode
+            // Set waktu berdasarkan mode
             switch (mode) {
                 case 'pomodoro':
                     timeLeft = settings.pomodoroTime * 60;
@@ -541,43 +601,49 @@
 
             updateTimerDisplay();
 
-            // Reset timer state
+            // Reset state timer
             clearInterval(timer);
             isRunning = false;
             startBtn.textContent = 'Start';
             resetBtn.disabled = true;
         }
 
-        // Called when timer completes
+        // =============================================
+        // FUNGSI KETIKA TIMER SELESAI
+        // =============================================
         function timerComplete() {
             isRunning = false;
             startBtn.textContent = 'Start';
             resetBtn.disabled = true;
 
-            // Play sound
-            playSound();
+            // Mainkan suara alarm (acak dari beberapa pilihan)
+            playRandomAlarmSound();
 
-            // Show modal with random quote
+            // Tampilkan modal dengan quote acak
             showModal();
 
-            // Determine next mode
+            // Update pomodoro count
             if (currentMode === 'pomodoro') {
                 pomodoroCount++;
             }
         }
 
-        // Show modal with random quote
+        // =============================================
+        // FUNGSI TAMPILKAN MODAL BREAK TIME
+        // =============================================
         function showModal() {
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             randomQuoteElement.textContent = `"${randomQuote}"`;
             modalOverlay.classList.add('show');
         }
 
-        // Close modal
+        // =============================================
+        // FUNGSI TUTUP MODAL
+        // =============================================
         function closeModal() {
             modalOverlay.classList.remove('show');
 
-            // Determine next mode after closing modal
+            // Tentukan mode berikutnya setelah tutup modal
             if (currentMode === 'pomodoro') {
                 if (pomodoroCount % 4 === 0) {
                     switchMode('longBreak');
@@ -589,25 +655,80 @@
             }
         }
 
-        // Update the timer display
+        // =============================================
+        // FUNGSI UPDATE TAMPILAN TIMER
+        // =============================================
         function updateTimerDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        // Toggle settings panel visibility
+        // =============================================
+        // FUNGSI TOGGLE SETTINGS PANEL
+        // =============================================
         function toggleSettings() {
             settingsPanel.classList.toggle('show');
         }
 
-        // Play sound
-        function playSound() {
-            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+        // =============================================
+        // FUNGSI MAINKAN SUARA ALARM (RANDOM)
+        // =============================================
+        function playRandomAlarmSound() {
+            // Beberapa pilihan suara alarm
+            const alarmSounds = [
+                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3',
+                'https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3',
+                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-996.mp3',
+                'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3'
+            ];
+            
+            // Pilih suara secara acak
+            const randomSound = alarmSounds[Math.floor(Math.random() * alarmSounds.length)];
+            const audio = new Audio(randomSound);
             audio.play();
         }
 
-        // Initialize the app
+        // =============================================
+        // FUNGSI TAMPILKAN ALERT (SWEETALERT STYLE)
+        // =============================================
+        function showAlert(message, type = 'error') {
+            // Buat elemen alert
+            const alert = document.createElement('div');
+            alert.style.position = 'fixed';
+            alert.style.top = '20px';
+            alert.style.right = '20px';
+            alert.style.padding = '15px 25px';
+            alert.style.borderRadius = '5px';
+            alert.style.color = 'white';
+            alert.style.fontWeight = '600';
+            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            alert.style.zIndex = '1000';
+            alert.style.animation = 'fadeIn 0.3s ease';
+            alert.textContent = message;
+            
+            // Set warna berdasarkan type
+            if (type === 'success') {
+                alert.style.backgroundColor = '#4BB543'; // Hijau
+            } else {
+                alert.style.backgroundColor = '#FF3333'; // Merah
+            }
+            
+            // Tambahkan ke body
+            document.body.appendChild(alert);
+            
+            // Hilangkan setelah 3 detik
+            setTimeout(() => {
+                alert.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(alert);
+                }, 300);
+            }, 3000);
+        }
+
+        // =============================================
+        // INISIALISASI APLIKASI
+        // =============================================
         init();
     </script>
 </body>

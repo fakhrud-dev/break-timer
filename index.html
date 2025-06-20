@@ -5,33 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Break Time - Pomodoro Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 
         * VARIABEL CSS UNTUK WARNA DAN TEMA
         * Menggunakan sistem warna yang modern dengan gradient
         */
-        :root {
+        
+         :root {
             --primary-color: #2b5876;
             --secondary-color: #4e4376;
             --dark-color: #1a1a2e;
             --light-color: #16213e;
-            --accent-color: #f9a828;  /* Warna aksen oranye untuk highlight */
-            --text-color: #e6e6e6;    /* Warna teks utama */
+            --accent-color: #f9a828;
+            --text-color: #e6e6e6;
+            --glass-bg: rgba(26, 26, 46, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
-        
         /* RESET CSS DASAR */
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
         /* 
         * STYLE UTAMA BODY
         * Menggunakan gradient background dan transition untuk efek smooth
         */
-        body { 
+        
+        body {
             background-color: var(--light-color);
             color: var(--text-color);
             min-height: 100vh;
@@ -41,13 +45,14 @@
             justify-content: center;
             transition: background-color 0.5s ease;
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
+            overflow: hidden;
         }
-        
         /* 
         * CONTAINER UTAMA
         * Menggunakan backdrop-filter untuk efek glassmorphism
         * Border dan shadow untuk depth
         */
+        
         .container {
             width: 90%;
             max-width: 500px;
@@ -55,24 +60,28 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            background-color: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);  /* Efek blur modern */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            /* Efek blur modern */
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 10;
         }
-        
         /* HEADER UTAMA */
+        
         h1 {
             color: var(--accent-color);
             margin-bottom: 1rem;
             font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
-        
         /* 
         * TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
         * Desain tombol dengan transition dan active state
         */
+        
         .mode-selector {
             display: flex;
             justify-content: center;
@@ -99,11 +108,11 @@
             color: var(--dark-color);
             box-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
-        
         /* 
         * TIMER DISPLAY
         * Font monospace untuk tampilan timer yang konsisten
         */
+        
         .timer-container {
             position: relative;
             margin: 1.5rem 0;
@@ -112,22 +121,24 @@
         .timer {
             font-size: 5rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;  /* Font fixed-width */
+            font-family: 'Courier New', monospace;
+            /* Font fixed-width */
             color: var(--text-color);
             position: relative;
             z-index: 2;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
             transition: font-size 0.3s ease;
+            margin-bottom: 1rem;
         }
         
         .timer.long-duration {
             font-size: 3.5rem;
         }
-        
         /* 
         * TOMBOL KONTROL (START/PAUSE/RESET)
         * Desain tombol dengan efek hover dan active
         */
+        
         .controls {
             display: flex;
             justify-content: center;
@@ -146,8 +157,8 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
         /* Tombol utama (Start/Pause) */
+        
         .btn-primary {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -163,8 +174,8 @@
             transform: translateY(2px);
             box-shadow: 0 2px 0 rgba(201, 134, 24, 0.8);
         }
-        
         /* Tombol sekunder (Reset) */
+        
         .btn-secondary {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
@@ -174,26 +185,26 @@
         .btn-secondary:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
-        
         /* State disabled untuk tombol */
+        
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
         }
-        
         /* 
         * PANEL SETTINGS
         * Animasi fadeIn untuk transisi smooth
         */
+        
         .settings {
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
         /* Tombol settings dengan efek rotate */
+        
         .settings-btn {
             background: none;
             border: none;
@@ -201,13 +212,21 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto;
         }
         
         .settings-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
             transform: rotate(90deg);
         }
-        
         /* Panel settings yang bisa di-toggle */
+        
         .settings-panel {
             display: none;
             margin-top: 1rem;
@@ -217,8 +236,8 @@
         .settings-panel.show {
             display: block;
         }
-        
         /* Form group untuk input settings */
+        
         .form-group {
             margin-bottom: 1rem;
             text-align: left;
@@ -239,8 +258,8 @@
             border-radius: 5px;
             color: var(--text-color);
         }
-        
         /* Tombol save settings */
+        
         .save-btn {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -251,11 +270,11 @@
             font-weight: 600;
             margin-top: 0.5rem;
         }
-        
         /* 
         * MODAL BREAK TIME
         * Tampilan modal saat timer selesai
         */
+        
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -288,19 +307,324 @@
             box-shadow: 0 0 30px rgba(249, 168, 40, 0.5);
             transform: scale(0.9);
             transition: transform 0.3s ease;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(10px);
         }
         
         .modal-overlay.show .modal {
             transform: scale(1);
         }
-        
         /* Animasi untuk ikon kopi */
+        
         .coffee-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             display: inline-block;
             animation: sway 3s infinite ease-in-out;
             transform-origin: bottom center;
+        }
+        /* Progress bar container */
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        /* Fullscreen button */
+        
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .fullscreen-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Notification sound toggle */
+        
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+        /* Floating particles background */
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(249, 168, 40, 0.6);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        /* Circular progress indicator */
+        
+        .circular-progress {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .progress-circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+        }
+        
+        .progress-circle-fill {
+            fill: none;
+            stroke: var(--accent-color);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .timer-inside-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: var(--text-color);
+        }
+        /* Work session counter */
+        
+        .session-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .session-counter span {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        /* Settings modal */
+        
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-modal.show {
+            display: flex;
+        }
+        
+        .settings-modal-content {
+            background-color: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .settings-modal-header h2 {
+            color: var(--accent-color);
+        }
+        
+        .close-settings {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .close-settings:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Delete session button */
+        
+        .delete-session-btn {
+            background-color: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-session-btn:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+        /* Mode selection animation */
+        
+        @keyframes modeSwitch {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .mode-switch-animation {
+            animation: modeSwitch 0.3s ease;
+        }
+        /* Timer complete animation */
+        
+        @keyframes timerComplete {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .timer-complete-animation {
+            animation: timerComplete 0.5s ease;
+        }
+        /* Floating animation for particles */
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         @keyframes sway {
@@ -322,10 +646,43 @@
             }
         }
         
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 10px rgba(249, 168, 40, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(249, 168, 40, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(249, 168, 40, 0.5);
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
         /* 
         * THEME BERDASARKAN MODE
         * Work mode dan break mode memiliki background berbeda
         */
+        
         body.work-mode {
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
         }
@@ -333,20 +690,34 @@
         body.break-mode {
             background-image: linear-gradient(to right top, #1a2a3a, #0f1a23);
         }
-        
         /* 
         * RESPONSIVE DESIGN
         * Penyesuaian untuk mobile devices
         */
+        
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 4rem;
+            }
+            .timer.long-duration {
+                font-size: 3rem;
+            }
+            .circular-progress {
+                width: 180px;
+                height: 180px;
+            }
+            .timer-inside-circle {
+                font-size: 2.2rem;
+            }
+        }
+        
         @media (max-width: 480px) {
             .timer {
                 font-size: 3rem;
             }
-            
             .timer.long-duration {
                 font-size: 2.2rem;
             }
-            
             .controls {
                 flex-direction: column;
                 align-items: center;
@@ -354,11 +725,54 @@
             .btn {
                 width: 100%;
             }
+            .circular-progress {
+                width: 150px;
+                height: 150px;
+            }
+            .timer-inside-circle {
+                font-size: 1.8rem;
+            }
+        }
+        /* Laptop/Desktop specific adjustments */
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 600px;
+                padding: 2.5rem;
+            }
+            h1 {
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
+            }
+            .timer {
+                font-size: 6rem;
+            }
+            .circular-progress {
+                width: 250px;
+                height: 250px;
+            }
+            .timer-inside-circle {
+                font-size: 3rem;
+            }
+            .btn {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 
 <body class="work-mode">
+    <div class="particles" id="particles"></div>
+
+    <div class="session-counter" id="session-counter">
+        <span id="pomodoro-count">0</span> sessions
+    </div>
+
+    <button class="fullscreen-btn" id="fullscreen-btn">
+        <i class="fas fa-expand"></i>
+    </button>
+
     <div class="container">
         <h1>Break Time</h1>
 
@@ -368,8 +782,12 @@
             <button class="mode-btn" id="long-break-btn">Long Break</button>
         </div>
 
-        <div class="timer-container">
-            <div class="timer" id="timer">25:00</div>
+        <div class="circular-progress">
+            <svg class="progress-circle" viewBox="0 0 200 200">
+                <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
+                <circle class="progress-circle-fill" cx="100" cy="100" r="90"></circle>
+            </svg>
+            <div class="timer-inside-circle" id="timer">25:00</div>
         </div>
 
         <div class="controls">
@@ -378,22 +796,9 @@
         </div>
 
         <div class="settings">
-            <button class="settings-btn" id="settings-btn">⚙️</button>
-            <div class="settings-panel" id="settings-panel">
-                <div class="form-group">
-                    <label for="pomodoro-time">Work Time (minutes)</label>
-                    <input type="number" id="pomodoro-time" min="1" max="240" value="25">
-                </div>
-                <div class="form-group">
-                    <label for="short-break-time">Short Break (minutes)</label>
-                    <input type="number" id="short-break-time" min="1" max="30" value="5">
-                </div>
-                <div class="form-group">
-                    <label for="long-break-time">Long Break (minutes)</label>
-                    <input type="number" id="long-break-time" min="1" max="120" value="15">
-                </div>
-                <button class="save-btn" id="save-settings-btn">Save Settings</button>
-            </div>
+            <button class="settings-btn" id="settings-btn">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
     </div>
 
@@ -401,11 +806,90 @@
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal">
             <div class="coffee-icon">☕</div>
-            <h2>Ngopi Dulu Bro!</h2>
+            <h2 id="modal-title">Time's Up!</h2>
             <p id="random-quote">"Take a break to sharpen your axe."</p>
-            <button class="modal-btn" id="modal-btn">Lanjut!</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="modal-progress"></div>
+            </div>
+            <button class="btn btn-primary" id="modal-btn">Continue</button>
         </div>
     </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-modal-content">
+            <div class="settings-modal-header">
+                <h2>Timer Settings</h2>
+                <button class="close-settings" id="close-settings">×</button>
+            </div>
+            <div class="form-group">
+                <label for="pomodoro-time">Work Time (minutes)</label>
+                <input type="number" id="pomodoro-time" min="1" max="240" value="25">
+            </div>
+            <div class="form-group">
+                <label for="short-break-time">Short Break (minutes)</label>
+                <input type="number" id="short-break-time" min="1" max="30" value="5">
+            </div>
+            <div class="form-group">
+                <label for="long-break-time">Long Break (minutes)</label>
+                <input type="number" id="long-break-time" min="1" max="120" value="15">
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+                    <span>Sound Notifications</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </label>
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+                    <span>Vibration</span>
+                    <label class="switch">
+                        <input type="checkbox" id="vibrate-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </label>
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+                    <span>Focus Sound</span>
+                    <label class="switch">
+                        <input type="checkbox" id="focus-sound-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </label>
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+                    <span>Auto-start next timer</span>
+                    <label class="switch">
+                        <input type="checkbox" id="auto-start">
+                        <span class="slider"></span>
+                    </label>
+                </label>
+            </div>
+
+            <button class="delete-session-btn" id="delete-session-btn">Reset Session Count</button>
+
+            <button class="save-btn" id="save-settings-btn">Save Settings</button>
+        </div>
+    </div>
+
+    <audio id="alarm-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="tick-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-clock-countdown-bleeps-916.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="focus-sound" preload="auto" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1681.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         // =============================================
@@ -418,15 +902,31 @@
         const shortBreakBtn = document.getElementById('short-break-btn');
         const longBreakBtn = document.getElementById('long-break-btn');
         const settingsBtn = document.getElementById('settings-btn');
-        const settingsPanel = document.getElementById('settings-panel');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalBtn = document.getElementById('modal-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const randomQuoteElement = document.getElementById('random-quote');
+        const modalProgress = document.getElementById('modal-progress');
+        const soundToggle = document.getElementById('sound-toggle');
+        const vibrateToggle = document.getElementById('vibrate-toggle');
+        const focusSoundToggle = document.getElementById('focus-sound-toggle');
+        const autoStartToggle = document.getElementById('auto-start');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const alarmSound = document.getElementById('alarm-sound');
+        const tickSound = document.getElementById('tick-sound');
+        const focusSound = document.getElementById('focus-sound');
+        const body = document.body;
+        const pomodoroCountElement = document.getElementById('pomodoro-count');
+        const sessionCounter = document.getElementById('session-counter');
+        const progressCircleFill = document.querySelector('.progress-circle-fill');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsBtn = document.getElementById('close-settings');
         const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const deleteSessionBtn = document.getElementById('delete-session-btn');
         const pomodoroTimeInput = document.getElementById('pomodoro-time');
         const shortBreakTimeInput = document.getElementById('short-break-time');
         const longBreakTimeInput = document.getElementById('long-break-time');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalBtn = document.getElementById('modal-btn');
-        const randomQuoteElement = document.getElementById('random-quote');
-        const body = document.body;
+        const particlesContainer = document.getElementById('particles');
 
         // =============================================
         // VARIABEL UTAMA TIMER
@@ -436,6 +936,12 @@
         let isRunning = false;
         let currentMode = 'pomodoro'; // 'pomodoro', 'shortBreak', 'longBreak'
         let pomodoroCount = 0; // Menghitung berapa kali pomodoro selesai
+        let totalSeconds = timeLeft;
+        let isSoundEnabled = true;
+        let isVibrateEnabled = true;
+        let isFocusSoundEnabled = false;
+        let isAutoStartEnabled = false;
+        let lastTickTime = 0;
 
         // =============================================
         // DATABASE QUOTE UNTUK BREAK TIME
@@ -464,7 +970,11 @@
         let settings = {
             pomodoroTime: 25,
             shortBreakTime: 5,
-            longBreakTime: 15
+            longBreakTime: 15,
+            soundEnabled: true,
+            vibrateEnabled: true,
+            focusSoundEnabled: false,
+            autoStart: false
         };
 
         // =============================================
@@ -473,7 +983,47 @@
         function init() {
             loadSettings();
             updateTimerDisplay();
+            updateProgressCircle();
             setupEventListeners();
+            updatePomodoroCount();
+            createParticles();
+
+            // Preload sounds
+            alarmSound.load();
+            tickSound.load();
+            focusSound.load();
+
+            // Set volume for focus sound
+            focusSound.volume = 0.3;
+        }
+
+        // =============================================
+        // FUNGSI MEMBUAT PARTIKEL BACKGROUND
+        // =============================================
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-${size}px`;
+
+                // Random animation duration between 10s and 20s
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+
+                particlesContainer.appendChild(particle);
+            }
         }
 
         // =============================================
@@ -486,6 +1036,32 @@
                 pomodoroTimeInput.value = settings.pomodoroTime;
                 shortBreakTimeInput.value = settings.shortBreakTime;
                 longBreakTimeInput.value = settings.longBreakTime;
+                soundToggle.checked = settings.soundEnabled;
+                vibrateToggle.checked = settings.vibrateEnabled;
+                focusSoundToggle.checked = settings.focusSoundEnabled;
+                autoStartToggle.checked = settings.autoStart;
+                isSoundEnabled = settings.soundEnabled;
+                isVibrateEnabled = settings.vibrateEnabled;
+                isFocusSoundEnabled = settings.focusSoundEnabled;
+                isAutoStartEnabled = settings.autoStart;
+
+                // Update focus sound based on setting
+                if (isFocusSoundEnabled && currentMode === 'pomodoro') {
+                    focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+                } else {
+                    focusSound.pause();
+                }
+            }
+
+            // Load session count
+            const savedCount = localStorage.getItem('pomodoroCount');
+            const lastDate = localStorage.getItem('lastPomodoroDate');
+            const today = new Date().toDateString();
+
+            if (savedCount && lastDate === today) {
+                pomodoroCount = parseInt(savedCount);
+            } else {
+                pomodoroCount = 0;
             }
         }
 
@@ -502,13 +1078,40 @@
             settings = {
                 pomodoroTime: parseInt(pomodoroTimeInput.value),
                 shortBreakTime: parseInt(shortBreakTimeInput.value),
-                longBreakTime: parseInt(longBreakTimeInput.value)
+                longBreakTime: parseInt(longBreakTimeInput.value),
+                soundEnabled: soundToggle.checked,
+                vibrateEnabled: vibrateToggle.checked,
+                focusSoundEnabled: focusSoundToggle.checked,
+                autoStart: autoStartToggle.checked
             };
+
             localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            isSoundEnabled = settings.soundEnabled;
+            isVibrateEnabled = settings.vibrateEnabled;
+            isFocusSoundEnabled = settings.focusSoundEnabled;
+            isAutoStartEnabled = settings.autoStart;
+
+            // Handle focus sound
+            if (isFocusSoundEnabled && currentMode === 'pomodoro') {
+                focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+            } else {
+                focusSound.pause();
+            }
+
             switchMode(currentMode); // Update timer dengan pengaturan baru
-            
+            closeSettings();
+
             // Tampilkan notifikasi sukses
             showAlert('Pengaturan berhasil disimpan!', 'success');
+        }
+
+        // =============================================
+        // FUNGSI RESET SESSION COUNT
+        // =============================================
+        function resetSessionCount() {
+            pomodoroCount = 0;
+            updatePomodoroCount();
+            showAlert('Session count has been reset!', 'success');
         }
 
         // =============================================
@@ -520,9 +1123,86 @@
             pomodoroBtn.addEventListener('click', () => switchMode('pomodoro'));
             shortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
             longBreakBtn.addEventListener('click', () => switchMode('longBreak'));
-            settingsBtn.addEventListener('click', toggleSettings);
+            settingsBtn.addEventListener('click', openSettings);
             saveSettingsBtn.addEventListener('click', saveSettings);
+            deleteSessionBtn.addEventListener('click', resetSessionCount);
             modalBtn.addEventListener('click', closeModal);
+            soundToggle.addEventListener('change', toggleSound);
+            vibrateToggle.addEventListener('change', toggleVibrate);
+            focusSoundToggle.addEventListener('change', toggleFocusSound);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            closeSettingsBtn.addEventListener('click', closeSettings);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    toggleTimer();
+                }
+                if (e.code === 'KeyR') {
+                    resetTimer();
+                }
+                if (e.code === 'KeyW') {
+                    switchMode('pomodoro');
+                }
+                if (e.code === 'KeyS') {
+                    switchMode('shortBreak');
+                }
+                if (e.code === 'KeyL') {
+                    switchMode('longBreak');
+                }
+                if (e.code === 'Escape') {
+                    closeSettings();
+                }
+            });
+        }
+
+        // =============================================
+        // FUNGSI TOGGLE FULLSCREEN
+        // =============================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // =============================================
+        // FUNGSI TOGGLE SOUND
+        // =============================================
+        function toggleSound() {
+            isSoundEnabled = soundToggle.checked;
+            settings.soundEnabled = isSoundEnabled;
+            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+        }
+
+        // =============================================
+        // FUNGSI TOGGLE VIBRATE
+        // =============================================
+        function toggleVibrate() {
+            isVibrateEnabled = vibrateToggle.checked;
+            settings.vibrateEnabled = isVibrateEnabled;
+            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+        }
+
+        // =============================================
+        // FUNGSI TOGGLE FOCUS SOUND
+        // =============================================
+        function toggleFocusSound() {
+            isFocusSoundEnabled = focusSoundToggle.checked;
+            settings.focusSoundEnabled = isFocusSoundEnabled;
+            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+
+            if (isFocusSoundEnabled && currentMode === 'pomodoro') {
+                focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+            } else {
+                focusSound.pause();
+            }
         }
 
         // =============================================
@@ -532,12 +1212,41 @@
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const remainingSeconds = seconds % 60;
-            
+
             if (hours > 0) {
                 return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
             } else {
                 return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
             }
+        }
+
+        // =============================================
+        // FUNGSI UPDATE PROGRESS CIRCLE
+        // =============================================
+        function updateProgressCircle() {
+            const progress = ((totalSeconds - timeLeft) / totalSeconds) * 565.48;
+            progressCircleFill.style.strokeDashoffset = 565.48 - progress;
+            modalProgress.style.width = `${(progress / 565.48 * 100)}%`;
+        }
+
+        // =============================================
+        // FUNGSI UPDATE POMODORO COUNT
+        // =============================================
+        function updatePomodoroCount() {
+            pomodoroCountElement.textContent = pomodoroCount;
+
+            // Animasi session counter saat bertambah
+            if (pomodoroCount > 0) {
+                sessionCounter.classList.add('timer-complete-animation');
+                setTimeout(() => {
+                    sessionCounter.classList.remove('timer-complete-animation');
+                }, 500);
+            }
+
+            // Simpan count ke localStorage
+            const today = new Date().toDateString();
+            localStorage.setItem('pomodoroCount', pomodoroCount);
+            localStorage.setItem('lastPomodoroDate', today);
         }
 
         // =============================================
@@ -563,6 +1272,21 @@
                 timer = setInterval(() => {
                     timeLeft--;
                     updateTimerDisplay();
+                    updateProgressCircle();
+
+                    // Play tick sound every second (but not too loud)
+                    const now = Date.now();
+                    if (isSoundEnabled && now - lastTickTime > 900 && timeLeft > 0 && timeLeft <= 10) {
+                        tickSound.currentTime = 0;
+                        tickSound.volume = 0.3;
+                        tickSound.play();
+                        lastTickTime = now;
+
+                        // Vibrate if enabled
+                        if (isVibrateEnabled && navigator.vibrate) {
+                            navigator.vibrate(100);
+                        }
+                    }
 
                     if (timeLeft <= 0) {
                         clearInterval(timer);
@@ -611,18 +1335,29 @@
                     timeLeft = settings.pomodoroTime * 60;
                     pomodoroBtn.classList.add('active');
                     body.className = 'work-mode';
+
+                    // Handle focus sound
+                    if (isFocusSoundEnabled) {
+                        focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+                    } else {
+                        focusSound.pause();
+                    }
                     break;
                 case 'shortBreak':
                     timeLeft = settings.shortBreakTime * 60;
                     shortBreakBtn.classList.add('active');
                     body.className = 'break-mode';
+                    focusSound.pause();
                     break;
                 case 'longBreak':
                     timeLeft = settings.longBreakTime * 60;
                     longBreakBtn.classList.add('active');
                     body.className = 'break-mode';
+                    focusSound.pause();
                     break;
             }
+
+            totalSeconds = timeLeft;
 
             // Update class untuk timer panjang
             if (timeLeft >= 3600) {
@@ -632,12 +1367,24 @@
             }
 
             updateTimerDisplay();
+            updateProgressCircle();
 
             // Reset state timer
             clearInterval(timer);
             isRunning = false;
             startBtn.textContent = 'Start';
             resetBtn.disabled = true;
+
+            // Animasi mode switch
+            timerDisplay.classList.add('mode-switch-animation');
+            setTimeout(() => {
+                timerDisplay.classList.remove('mode-switch-animation');
+            }, 300);
+
+            // Auto-start jika setting diaktifkan
+            if (isAutoStartEnabled) {
+                startTimer();
+            }
         }
 
         // =============================================
@@ -648,15 +1395,32 @@
             startBtn.textContent = 'Start';
             resetBtn.disabled = true;
 
-            // Mainkan suara alarm (acak dari beberapa pilihan)
-            playRandomAlarmSound();
+            // Mainkan suara alarm
+            if (isSoundEnabled) {
+                alarmSound.currentTime = 0;
+                alarmSound.play();
+            }
+
+            // Vibrate if enabled
+            if (isVibrateEnabled && navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
 
             // Tampilkan modal dengan quote acak
             showModal();
 
-            // Update pomodoro count
+            // Update pomodoro count jika mode work
             if (currentMode === 'pomodoro') {
                 pomodoroCount++;
+                updatePomodoroCount();
+            }
+
+            // Notifikasi desktop jika didukung
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification('Timer Complete!', {
+                    body: currentMode === 'pomodoro' ? 'Time for a break!' : 'Time to get back to work!',
+                    icon: 'https://cdn-icons-png.flaticon.com/512/2913/2913103.png'
+                });
             }
         }
 
@@ -666,7 +1430,20 @@
         function showModal() {
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             randomQuoteElement.textContent = `"${randomQuote}"`;
+
+            // Set judul modal berdasarkan mode
+            if (currentMode === 'pomodoro') {
+                modalTitle.textContent = 'Time for a Break!';
+            } else {
+                modalTitle.textContent = 'Back to Work!';
+            }
+
             modalOverlay.classList.add('show');
+
+            // Request notification permission jika belum
+            if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission();
+            }
         }
 
         // =============================================
@@ -692,38 +1469,27 @@
         // =============================================
         function updateTimerDisplay() {
             timerDisplay.textContent = formatTime(timeLeft);
-            
-            // Sesuaikan ukuran font berdasarkan panjang teks
-            if (timeLeft >= 3600) { // Jika lebih dari 1 jam
-                timerDisplay.style.fontSize = '3.5rem';
+
+            // Animasi pulse saat waktu hampir habis
+            if (timeLeft <= 10 && timeLeft > 0) {
+                timerDisplay.style.animation = 'pulse 1s infinite';
             } else {
-                timerDisplay.style.fontSize = '5rem';
+                timerDisplay.style.animation = 'none';
             }
         }
 
         // =============================================
-        // FUNGSI TOGGLE SETTINGS PANEL
+        // FUNGSI BUKA SETTINGS MODAL
         // =============================================
-        function toggleSettings() {
-            settingsPanel.classList.toggle('show');
+        function openSettings() {
+            settingsModal.classList.add('show');
         }
 
         // =============================================
-        // FUNGSI MAINKAN SUARA ALARM (RANDOM)
+        // FUNGSI TUTUP SETTINGS MODAL
         // =============================================
-        function playRandomAlarmSound() {
-            // Beberapa pilihan suara alarm
-            const alarmSounds = [
-                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-996.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3'
-            ];
-            
-            // Pilih suara secara acak
-            const randomSound = alarmSounds[Math.floor(Math.random() * alarmSounds.length)];
-            const audio = new Audio(randomSound);
-            audio.play();
+        function closeSettings() {
+            settingsModal.classList.remove('show');
         }
 
         // =============================================
@@ -743,17 +1509,17 @@
             alert.style.zIndex = '1000';
             alert.style.animation = 'fadeIn 0.3s ease';
             alert.textContent = message;
-            
+
             // Set warna berdasarkan type
             if (type === 'success') {
                 alert.style.backgroundColor = '#4BB543'; // Hijau
             } else {
                 alert.style.backgroundColor = '#FF3333'; // Merah
             }
-            
+
             // Tambahkan ke body
             document.body.appendChild(alert);
-            
+
             // Hilangkan setelah 3 detik
             setTimeout(() => {
                 alert.style.animation = 'fadeOut 0.3s ease';

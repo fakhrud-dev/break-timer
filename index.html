@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Break Time - Pomodoro Timer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         /* 
         * VARIABEL CSS UNTUK WARNA DAN TEMA
@@ -28,7 +28,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
         /* 
         * STYLE UTAMA BODY
@@ -121,7 +121,7 @@
         .timer {
             font-size: 5rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;
+            font-family: "Courier New", monospace;
             /* Font fixed-width */
             color: var(--text-color);
             position: relative;
@@ -361,6 +361,10 @@
             transition: background-color 0.3s ease;
         }
         
+        .fullscreen-btn i {
+            transition: transform 0.3s ease;
+        }
+        
         .fullscreen-btn:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
@@ -403,7 +407,7 @@
             right: 0;
             bottom: 0;
             background-color: rgba(255, 255, 255, 0.2);
-            transition: .4s;
+            transition: 0.4s;
             border-radius: 24px;
         }
         
@@ -415,7 +419,7 @@
             left: 4px;
             bottom: 4px;
             background-color: white;
-            transition: .4s;
+            transition: 0.4s;
             border-radius: 50%;
         }
         
@@ -482,7 +486,7 @@
             transform: translate(-50%, -50%);
             font-size: 2.5rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;
+            font-family: "Courier New", monospace;
             color: var(--text-color);
         }
         /* Work session counter */
@@ -490,7 +494,7 @@
         .session-counter {
             position: absolute;
             top: 20px;
-            left: 20px;
+            right: 110px;
             background-color: rgba(255, 255, 255, 0.1);
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -579,6 +583,108 @@
         
         .delete-session-btn:hover {
             background-color: rgba(255, 0, 0, 0.3);
+        }
+        /* Shortcut button */
+        
+        .shortcut-btn {
+            position: absolute;
+            top: 20px;
+            right: 70px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .shortcut-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Shortcut guide modal */
+        
+        .shortcut-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shortcut-modal.show {
+            display: flex;
+        }
+        
+        .shortcut-modal-content {
+            background-color: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .shortcut-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .shortcut-modal-header h2 {
+            color: var(--accent-color);
+        }
+        
+        .shortcut-list {
+            text-align: left;
+        }
+        
+        .shortcut-item {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .shortcut-key {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .close-shortcut {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .close-shortcut:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         /* Mode selection animation */
         
@@ -770,7 +876,10 @@
     </div>
 
     <button class="fullscreen-btn" id="fullscreen-btn">
-        <i class="fas fa-expand"></i>
+      <i class="fas fa-expand"></i>
+    </button>
+    <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
+      <i class="fas fa-question"></i>
     </button>
 
     <div class="container">
@@ -784,9 +893,14 @@
 
         <div class="circular-progress">
             <svg class="progress-circle" viewBox="0 0 200 200">
-                <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
-                <circle class="progress-circle-fill" cx="100" cy="100" r="90"></circle>
-            </svg>
+          <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
+          <circle
+            class="progress-circle-fill"
+            cx="100"
+            cy="100"
+            r="90"
+          ></circle>
+        </svg>
             <div class="timer-inside-circle" id="timer">25:00</div>
         </div>
 
@@ -797,8 +911,56 @@
 
         <div class="settings">
             <button class="settings-btn" id="settings-btn">
-                <i class="fas fa-cog"></i>
-            </button>
+          <i class="fas fa-cog"></i>
+        </button>
+        </div>
+    </div>
+
+    <!-- Shortcut Guide Modal -->
+    <div class="shortcut-modal" id="shortcut-modal">
+        <div class="shortcut-modal-content">
+            <div class="shortcut-modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button class="close-shortcut" id="close-shortcut">×</button>
+            </div>
+            <div class="shortcut-list">
+                <div class="shortcut-item">
+                    <span>Start/Pause Timer</span>
+                    <span class="shortcut-key">Space</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Reset Timer</span>
+                    <span class="shortcut-key">R</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Work Mode</span>
+                    <span class="shortcut-key">W</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Short Break</span>
+                    <span class="shortcut-key">S</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Long Break</span>
+                    <span class="shortcut-key">L</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Open Guide</span>
+                    <span class="shortcut-key">G</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Open Settings</span>
+                    <span class="shortcut-key">O</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Toggle Fullscreen</span>
+                    <span class="shortcut-key">F</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Close Popup</span>
+                    <span class="shortcut-key">Esc</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -824,109 +986,125 @@
             </div>
             <div class="form-group">
                 <label for="pomodoro-time">Work Time (minutes)</label>
-                <input type="number" id="pomodoro-time" min="1" max="240" value="25">
+                <input type="number" id="pomodoro-time" min="1" max="240" value="25" />
             </div>
             <div class="form-group">
                 <label for="short-break-time">Short Break (minutes)</label>
-                <input type="number" id="short-break-time" min="1" max="30" value="5">
+                <input type="number" id="short-break-time" min="1" max="30" value="5" />
             </div>
             <div class="form-group">
                 <label for="long-break-time">Long Break (minutes)</label>
-                <input type="number" id="long-break-time" min="1" max="120" value="15">
+                <input type="number" id="long-break-time" min="1" max="120" value="15" />
             </div>
 
             <div class="toggle-group">
                 <label class="toggle-label">
-                    <span>Sound Notifications</span>
-                    <label class="switch">
-                        <input type="checkbox" id="sound-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
+            <span>Sound Notifications</span>
+            <label class="switch">
+              <input type="checkbox" id="sound-toggle" checked />
+              <span class="slider"></span>
+            </label>
                 </label>
             </div>
 
             <div class="toggle-group">
                 <label class="toggle-label">
-                    <span>Vibration</span>
-                    <label class="switch">
-                        <input type="checkbox" id="vibrate-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
+            <span>Vibration</span>
+            <label class="switch">
+              <input type="checkbox" id="vibrate-toggle" checked />
+              <span class="slider"></span>
+            </label>
                 </label>
             </div>
 
             <div class="toggle-group">
                 <label class="toggle-label">
-                    <span>Focus Sound</span>
-                    <label class="switch">
-                        <input type="checkbox" id="focus-sound-toggle">
-                        <span class="slider"></span>
-                    </label>
+            <span>Focus Sound</span>
+            <label class="switch">
+              <input type="checkbox" id="focus-sound-toggle" />
+              <span class="slider"></span>
+            </label>
                 </label>
             </div>
 
             <div class="toggle-group">
                 <label class="toggle-label">
-                    <span>Auto-start next timer</span>
-                    <label class="switch">
-                        <input type="checkbox" id="auto-start">
-                        <span class="slider"></span>
-                    </label>
+            <span>Auto-start next timer</span>
+            <label class="switch">
+              <input type="checkbox" id="auto-start" />
+              <span class="slider"></span>
+            </label>
                 </label>
             </div>
 
-            <button class="delete-session-btn" id="delete-session-btn">Reset Session Count</button>
+            <button class="delete-session-btn" id="delete-session-btn">
+          Reset Session Count
+        </button>
 
             <button class="save-btn" id="save-settings-btn">Save Settings</button>
         </div>
     </div>
 
     <audio id="alarm-sound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+      <source
+        src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"
+        type="audio/mpeg"
+      />
     </audio>
     <audio id="tick-sound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-clock-countdown-bleeps-916.mp3" type="audio/mpeg">
+      <source
+        src="https://assets.mixkit.co/sfx/preview/mixkit-clock-countdown-bleeps-916.mp3"
+        type="audio/mpeg"
+      />
     </audio>
     <audio id="focus-sound" preload="auto" loop>
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1681.mp3" type="audio/mpeg">
+      <source
+        src="https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1681.mp3"
+        type="audio/mpeg"
+      />
     </audio>
 
     <script>
         // =============================================
         // INISIALISASI ELEMEN DOM
         // =============================================
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('start-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const pomodoroBtn = document.getElementById('pomodoro-btn');
-        const shortBreakBtn = document.getElementById('short-break-btn');
-        const longBreakBtn = document.getElementById('long-break-btn');
-        const settingsBtn = document.getElementById('settings-btn');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalBtn = document.getElementById('modal-btn');
-        const modalTitle = document.getElementById('modal-title');
-        const randomQuoteElement = document.getElementById('random-quote');
-        const modalProgress = document.getElementById('modal-progress');
-        const soundToggle = document.getElementById('sound-toggle');
-        const vibrateToggle = document.getElementById('vibrate-toggle');
-        const focusSoundToggle = document.getElementById('focus-sound-toggle');
-        const autoStartToggle = document.getElementById('auto-start');
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const alarmSound = document.getElementById('alarm-sound');
-        const tickSound = document.getElementById('tick-sound');
-        const focusSound = document.getElementById('focus-sound');
+        const timerDisplay = document.getElementById("timer");
+        const startBtn = document.getElementById("start-btn");
+        const resetBtn = document.getElementById("reset-btn");
+        const pomodoroBtn = document.getElementById("pomodoro-btn");
+        const shortBreakBtn = document.getElementById("short-break-btn");
+        const longBreakBtn = document.getElementById("long-break-btn");
+        const settingsBtn = document.getElementById("settings-btn");
+        const modalOverlay = document.getElementById("modal-overlay");
+        const modalBtn = document.getElementById("modal-btn");
+        const modalTitle = document.getElementById("modal-title");
+        const randomQuoteElement = document.getElementById("random-quote");
+        const modalProgress = document.getElementById("modal-progress");
+        const soundToggle = document.getElementById("sound-toggle");
+        const vibrateToggle = document.getElementById("vibrate-toggle");
+        const focusSoundToggle = document.getElementById("focus-sound-toggle");
+        const autoStartToggle = document.getElementById("auto-start");
+        const fullscreenBtn = document.getElementById("fullscreen-btn");
+        const alarmSound = document.getElementById("alarm-sound");
+        const tickSound = document.getElementById("tick-sound");
+        const focusSound = document.getElementById("focus-sound");
         const body = document.body;
-        const pomodoroCountElement = document.getElementById('pomodoro-count');
-        const sessionCounter = document.getElementById('session-counter');
-        const progressCircleFill = document.querySelector('.progress-circle-fill');
-        const settingsModal = document.getElementById('settings-modal');
-        const closeSettingsBtn = document.getElementById('close-settings');
-        const saveSettingsBtn = document.getElementById('save-settings-btn');
-        const deleteSessionBtn = document.getElementById('delete-session-btn');
-        const pomodoroTimeInput = document.getElementById('pomodoro-time');
-        const shortBreakTimeInput = document.getElementById('short-break-time');
-        const longBreakTimeInput = document.getElementById('long-break-time');
-        const particlesContainer = document.getElementById('particles');
+        const pomodoroCountElement = document.getElementById("pomodoro-count");
+        const sessionCounter = document.getElementById("session-counter");
+        const progressCircleFill = document.querySelector(
+            ".progress-circle-fill"
+        );
+        const settingsModal = document.getElementById("settings-modal");
+        const closeSettingsBtn = document.getElementById("close-settings");
+        const saveSettingsBtn = document.getElementById("save-settings-btn");
+        const deleteSessionBtn = document.getElementById("delete-session-btn");
+        const pomodoroTimeInput = document.getElementById("pomodoro-time");
+        const shortBreakTimeInput = document.getElementById("short-break-time");
+        const longBreakTimeInput = document.getElementById("long-break-time");
+        const particlesContainer = document.getElementById("particles");
+        const shortcutBtn = document.getElementById("shortcut-btn");
+        const shortcutModal = document.getElementById("shortcut-modal");
+        const closeShortcutBtn = document.getElementById("close-shortcut");
 
         // =============================================
         // VARIABEL UTAMA TIMER
@@ -934,7 +1112,7 @@
         let timer;
         let timeLeft = 25 * 60; // 25 menit dalam detik
         let isRunning = false;
-        let currentMode = 'pomodoro'; // 'pomodoro', 'shortBreak', 'longBreak'
+        let currentMode = "pomodoro"; // 'pomodoro', 'shortBreak', 'longBreak'
         let pomodoroCount = 0; // Menghitung berapa kali pomodoro selesai
         let totalSeconds = timeLeft;
         let isSoundEnabled = true;
@@ -961,7 +1139,7 @@
             "Kerja keras itu penting, tapi beristirahat juga penting.",
             "Kamu tidak bisa menuangkan dari cangkir kosong. Jaga dirimu dulu.",
             "Kesuksesan adalah mendapatkan apa yang kamu inginkan. Kebahagiaan adalah menginginkan apa yang kamu dapatkan.",
-            "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu."
+            "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu.",
         ];
 
         // =============================================
@@ -974,7 +1152,7 @@
             soundEnabled: true,
             vibrateEnabled: true,
             focusSoundEnabled: false,
-            autoStart: false
+            autoStart: false,
         };
 
         // =============================================
@@ -1003,8 +1181,8 @@
         function createParticles() {
             const particleCount = 30;
             for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
+                const particle = document.createElement("div");
+                particle.classList.add("particle");
 
                 // Random size between 2px and 6px
                 const size = Math.random() * 4 + 2;
@@ -1030,7 +1208,7 @@
         // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
         // =============================================
         function loadSettings() {
-            const savedSettings = localStorage.getItem('pomodoroSettings');
+            const savedSettings = localStorage.getItem("pomodoroSettings");
             if (savedSettings) {
                 settings = JSON.parse(savedSettings);
                 pomodoroTimeInput.value = settings.pomodoroTime;
@@ -1046,16 +1224,18 @@
                 isAutoStartEnabled = settings.autoStart;
 
                 // Update focus sound based on setting
-                if (isFocusSoundEnabled && currentMode === 'pomodoro') {
-                    focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+                if (isFocusSoundEnabled && currentMode === "pomodoro") {
+                    focusSound
+                        .play()
+                        .catch((e) => console.log("Autoplay prevented:", e));
                 } else {
                     focusSound.pause();
                 }
             }
 
             // Load session count
-            const savedCount = localStorage.getItem('pomodoroCount');
-            const lastDate = localStorage.getItem('lastPomodoroDate');
+            const savedCount = localStorage.getItem("pomodoroCount");
+            const lastDate = localStorage.getItem("lastPomodoroDate");
             const today = new Date().toDateString();
 
             if (savedCount && lastDate === today) {
@@ -1070,8 +1250,11 @@
         // =============================================
         function saveSettings() {
             // Validasi input tidak boleh kosong
-            if (!pomodoroTimeInput.value || !shortBreakTimeInput.value || !longBreakTimeInput.value) {
-                showAlert('Harap isi semua field pengaturan!');
+            if (!pomodoroTimeInput.value ||
+                !shortBreakTimeInput.value ||
+                !longBreakTimeInput.value
+            ) {
+                showAlert("Harap isi semua field pengaturan!");
                 return;
             }
 
@@ -1082,18 +1265,18 @@
                 soundEnabled: soundToggle.checked,
                 vibrateEnabled: vibrateToggle.checked,
                 focusSoundEnabled: focusSoundToggle.checked,
-                autoStart: autoStartToggle.checked
+                autoStart: autoStartToggle.checked,
             };
 
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
             isSoundEnabled = settings.soundEnabled;
             isVibrateEnabled = settings.vibrateEnabled;
             isFocusSoundEnabled = settings.focusSoundEnabled;
             isAutoStartEnabled = settings.autoStart;
 
             // Handle focus sound
-            if (isFocusSoundEnabled && currentMode === 'pomodoro') {
-                focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+            if (isFocusSoundEnabled && currentMode === "pomodoro") {
+                focusSound.play().catch((e) => console.log("Autoplay prevented:", e));
             } else {
                 focusSound.pause();
             }
@@ -1102,7 +1285,7 @@
             closeSettings();
 
             // Tampilkan notifikasi sukses
-            showAlert('Pengaturan berhasil disimpan!', 'success');
+            showAlert("Pengaturan berhasil disimpan!", "success");
         }
 
         // =============================================
@@ -1111,48 +1294,67 @@
         function resetSessionCount() {
             pomodoroCount = 0;
             updatePomodoroCount();
-            showAlert('Session count has been reset!', 'success');
+            showAlert("Session count has been reset!", "success");
         }
 
         // =============================================
         // FUNGSI SETUP EVENT LISTENERS
         // =============================================
         function setupEventListeners() {
-            startBtn.addEventListener('click', toggleTimer);
-            resetBtn.addEventListener('click', resetTimer);
-            pomodoroBtn.addEventListener('click', () => switchMode('pomodoro'));
-            shortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
-            longBreakBtn.addEventListener('click', () => switchMode('longBreak'));
-            settingsBtn.addEventListener('click', openSettings);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            deleteSessionBtn.addEventListener('click', resetSessionCount);
-            modalBtn.addEventListener('click', closeModal);
-            soundToggle.addEventListener('change', toggleSound);
-            vibrateToggle.addEventListener('change', toggleVibrate);
-            focusSoundToggle.addEventListener('change', toggleFocusSound);
-            fullscreenBtn.addEventListener('click', toggleFullscreen);
-            closeSettingsBtn.addEventListener('click', closeSettings);
+            startBtn.addEventListener("click", toggleTimer);
+            resetBtn.addEventListener("click", resetTimer);
+            pomodoroBtn.addEventListener("click", () => switchMode("pomodoro"));
+            shortBreakBtn.addEventListener("click", () => switchMode("shortBreak"));
+            longBreakBtn.addEventListener("click", () => switchMode("longBreak"));
+            settingsBtn.addEventListener("click", openSettings);
+            saveSettingsBtn.addEventListener("click", saveSettings);
+            deleteSessionBtn.addEventListener("click", resetSessionCount);
+            modalBtn.addEventListener("click", closeModal);
+            soundToggle.addEventListener("change", toggleSound);
+            vibrateToggle.addEventListener("change", toggleVibrate);
+            focusSoundToggle.addEventListener("change", toggleFocusSound);
+            fullscreenBtn.addEventListener("click", toggleFullscreen);
+            closeSettingsBtn.addEventListener("click", closeSettings);
+            shortcutBtn.addEventListener("click", openShortcutGuide);
+            closeShortcutBtn.addEventListener("click", closeShortcutGuide);
 
             // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
+            document.addEventListener("keydown", (e) => {
+                if (e.code === "Space") {
                     e.preventDefault();
                     toggleTimer();
                 }
-                if (e.code === 'KeyR') {
+                if (e.code === "KeyO") {
+                    openSettings();
+                }
+                if (e.code === "KeyF") {
+                    toggleFullscreen();
+                }
+                if (e.code === "KeyG") {
+                    openShortcutGuide();
+                }
+                if (e.code === "KeyR") {
                     resetTimer();
                 }
-                if (e.code === 'KeyW') {
-                    switchMode('pomodoro');
+                if (e.code === "KeyW") {
+                    switchMode("pomodoro");
                 }
-                if (e.code === 'KeyS') {
-                    switchMode('shortBreak');
+                if (e.code === "KeyS") {
+                    switchMode("shortBreak");
                 }
-                if (e.code === 'KeyL') {
-                    switchMode('longBreak');
+                if (e.code === "KeyL") {
+                    switchMode("longBreak");
                 }
-                if (e.code === 'Escape') {
-                    closeSettings();
+                if (e.code === "Escape") {
+                    if (settingsModal.classList.contains("show")) {
+                        closeSettings();
+                    }
+                    if (shortcutModal.classList.contains("show")) {
+                        closeShortcutGuide();
+                    }
+                    if (modalOverlay.classList.contains("show")) {
+                        closeModal();
+                    }
                 }
             });
         }
@@ -1162,8 +1364,10 @@
         // =============================================
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.error(
+                        `Error attempting to enable fullscreen: ${err.message}`
+                    );
                 });
             } else {
                 if (document.exitFullscreen) {
@@ -1178,7 +1382,7 @@
         function toggleSound() {
             isSoundEnabled = soundToggle.checked;
             settings.soundEnabled = isSoundEnabled;
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
         }
 
         // =============================================
@@ -1187,7 +1391,7 @@
         function toggleVibrate() {
             isVibrateEnabled = vibrateToggle.checked;
             settings.vibrateEnabled = isVibrateEnabled;
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
         }
 
         // =============================================
@@ -1196,10 +1400,10 @@
         function toggleFocusSound() {
             isFocusSoundEnabled = focusSoundToggle.checked;
             settings.focusSoundEnabled = isFocusSoundEnabled;
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
 
-            if (isFocusSoundEnabled && currentMode === 'pomodoro') {
-                focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+            if (isFocusSoundEnabled && currentMode === "pomodoro") {
+                focusSound.play().catch((e) => console.log("Autoplay prevented:", e));
             } else {
                 focusSound.pause();
             }
@@ -1214,9 +1418,13 @@
             const remainingSeconds = seconds % 60;
 
             if (hours > 0) {
-                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                return `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
             } else {
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+            .toString()
+            .padStart(2, "0")}`;
             }
         }
 
@@ -1226,7 +1434,7 @@
         function updateProgressCircle() {
             const progress = ((totalSeconds - timeLeft) / totalSeconds) * 565.48;
             progressCircleFill.style.strokeDashoffset = 565.48 - progress;
-            modalProgress.style.width = `${(progress / 565.48 * 100)}%`;
+            modalProgress.style.width = `${(progress / 565.48) * 100}%`;
         }
 
         // =============================================
@@ -1237,16 +1445,16 @@
 
             // Animasi session counter saat bertambah
             if (pomodoroCount > 0) {
-                sessionCounter.classList.add('timer-complete-animation');
+                sessionCounter.classList.add("timer-complete-animation");
                 setTimeout(() => {
-                    sessionCounter.classList.remove('timer-complete-animation');
+                    sessionCounter.classList.remove("timer-complete-animation");
                 }, 500);
             }
 
             // Simpan count ke localStorage
             const today = new Date().toDateString();
-            localStorage.setItem('pomodoroCount', pomodoroCount);
-            localStorage.setItem('lastPomodoroDate', today);
+            localStorage.setItem("pomodoroCount", pomodoroCount);
+            localStorage.setItem("lastPomodoroDate", today);
         }
 
         // =============================================
@@ -1266,7 +1474,7 @@
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
-                startBtn.textContent = 'Pause';
+                startBtn.textContent = "Pause";
                 resetBtn.disabled = false;
 
                 timer = setInterval(() => {
@@ -1276,7 +1484,12 @@
 
                     // Play tick sound every second (but not too loud)
                     const now = Date.now();
-                    if (isSoundEnabled && now - lastTickTime > 900 && timeLeft > 0 && timeLeft <= 10) {
+                    if (
+                        isSoundEnabled &&
+                        now - lastTickTime > 900 &&
+                        timeLeft > 0 &&
+                        timeLeft <= 10
+                    ) {
                         tickSound.currentTime = 0;
                         tickSound.volume = 0.3;
                         tickSound.play();
@@ -1303,7 +1516,7 @@
             if (isRunning) {
                 clearInterval(timer);
                 isRunning = false;
-                startBtn.textContent = 'Resume';
+                startBtn.textContent = "Resume";
             }
         }
 
@@ -1313,7 +1526,7 @@
         function resetTimer() {
             clearInterval(timer);
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
             switchMode(currentMode); // Reset ke waktu awal mode saat ini
         }
@@ -1325,34 +1538,36 @@
             currentMode = mode;
 
             // Update tombol aktif
-            pomodoroBtn.classList.remove('active');
-            shortBreakBtn.classList.remove('active');
-            longBreakBtn.classList.remove('active');
+            pomodoroBtn.classList.remove("active");
+            shortBreakBtn.classList.remove("active");
+            longBreakBtn.classList.remove("active");
 
             // Set waktu berdasarkan mode
             switch (mode) {
-                case 'pomodoro':
+                case "pomodoro":
                     timeLeft = settings.pomodoroTime * 60;
-                    pomodoroBtn.classList.add('active');
-                    body.className = 'work-mode';
+                    pomodoroBtn.classList.add("active");
+                    body.className = "work-mode";
 
                     // Handle focus sound
                     if (isFocusSoundEnabled) {
-                        focusSound.play().catch(e => console.log("Autoplay prevented:", e));
+                        focusSound
+                            .play()
+                            .catch((e) => console.log("Autoplay prevented:", e));
                     } else {
                         focusSound.pause();
                     }
                     break;
-                case 'shortBreak':
+                case "shortBreak":
                     timeLeft = settings.shortBreakTime * 60;
-                    shortBreakBtn.classList.add('active');
-                    body.className = 'break-mode';
+                    shortBreakBtn.classList.add("active");
+                    body.className = "break-mode";
                     focusSound.pause();
                     break;
-                case 'longBreak':
+                case "longBreak":
                     timeLeft = settings.longBreakTime * 60;
-                    longBreakBtn.classList.add('active');
-                    body.className = 'break-mode';
+                    longBreakBtn.classList.add("active");
+                    body.className = "break-mode";
                     focusSound.pause();
                     break;
             }
@@ -1361,9 +1576,9 @@
 
             // Update class untuk timer panjang
             if (timeLeft >= 3600) {
-                timerDisplay.classList.add('long-duration');
+                timerDisplay.classList.add("long-duration");
             } else {
-                timerDisplay.classList.remove('long-duration');
+                timerDisplay.classList.remove("long-duration");
             }
 
             updateTimerDisplay();
@@ -1372,13 +1587,13 @@
             // Reset state timer
             clearInterval(timer);
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
 
             // Animasi mode switch
-            timerDisplay.classList.add('mode-switch-animation');
+            timerDisplay.classList.add("mode-switch-animation");
             setTimeout(() => {
-                timerDisplay.classList.remove('mode-switch-animation');
+                timerDisplay.classList.remove("mode-switch-animation");
             }, 300);
 
             // Auto-start jika setting diaktifkan
@@ -1392,7 +1607,7 @@
         // =============================================
         function timerComplete() {
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
 
             // Mainkan suara alarm
@@ -1410,16 +1625,17 @@
             showModal();
 
             // Update pomodoro count jika mode work
-            if (currentMode === 'pomodoro') {
+            if (currentMode === "pomodoro") {
                 pomodoroCount++;
                 updatePomodoroCount();
             }
 
             // Notifikasi desktop jika didukung
-            if ('Notification' in window && Notification.permission === 'granted') {
-                const notification = new Notification('Timer Complete!', {
-                    body: currentMode === 'pomodoro' ? 'Time for a break!' : 'Time to get back to work!',
-                    icon: 'https://cdn-icons-png.flaticon.com/512/2913/2913103.png'
+            if ("Notification" in window && Notification.permission === "granted") {
+                const notification = new Notification("Timer Complete!", {
+                    body: currentMode === "pomodoro" ?
+                        "Time for a break!" : "Time to get back to work!",
+                    icon: "https://cdn-icons-png.flaticon.com/512/2913/2913103.png",
                 });
             }
         }
@@ -1432,16 +1648,16 @@
             randomQuoteElement.textContent = `"${randomQuote}"`;
 
             // Set judul modal berdasarkan mode
-            if (currentMode === 'pomodoro') {
-                modalTitle.textContent = 'Time for a Break!';
+            if (currentMode === "pomodoro") {
+                modalTitle.textContent = "Time for a Break!";
             } else {
-                modalTitle.textContent = 'Back to Work!';
+                modalTitle.textContent = "Back to Work!";
             }
 
-            modalOverlay.classList.add('show');
+            modalOverlay.classList.add("show");
 
             // Request notification permission jika belum
-            if ('Notification' in window && Notification.permission !== 'denied') {
+            if ("Notification" in window && Notification.permission !== "denied") {
                 Notification.requestPermission();
             }
         }
@@ -1450,17 +1666,17 @@
         // FUNGSI TUTUP MODAL
         // =============================================
         function closeModal() {
-            modalOverlay.classList.remove('show');
+            modalOverlay.classList.remove("show");
 
             // Tentukan mode berikutnya setelah tutup modal
-            if (currentMode === 'pomodoro') {
+            if (currentMode === "pomodoro") {
                 if (pomodoroCount % 4 === 0) {
-                    switchMode('longBreak');
+                    switchMode("longBreak");
                 } else {
-                    switchMode('shortBreak');
+                    switchMode("shortBreak");
                 }
             } else {
-                switchMode('pomodoro');
+                switchMode("pomodoro");
             }
         }
 
@@ -1472,9 +1688,9 @@
 
             // Animasi pulse saat waktu hampir habis
             if (timeLeft <= 10 && timeLeft > 0) {
-                timerDisplay.style.animation = 'pulse 1s infinite';
+                timerDisplay.style.animation = "pulse 1s infinite";
             } else {
-                timerDisplay.style.animation = 'none';
+                timerDisplay.style.animation = "none";
             }
         }
 
@@ -1482,39 +1698,80 @@
         // FUNGSI BUKA SETTINGS MODAL
         // =============================================
         function openSettings() {
-            settingsModal.classList.add('show');
+            settingsModal.classList.add("show");
         }
 
         // =============================================
         // FUNGSI TUTUP SETTINGS MODAL
         // =============================================
         function closeSettings() {
-            settingsModal.classList.remove('show');
+            settingsModal.classList.remove("show");
+        }
+
+        // Fungsi untuk membuka shortcut guide
+        function openShortcutGuide() {
+            shortcutModal.classList.add("show");
+        }
+
+        // Fungsi untuk menutup shortcut guide
+        function closeShortcutGuide() {
+            shortcutModal.classList.remove("show");
+        }
+
+        // Fungsi untuk menangani perubahan fullscreen
+        document.addEventListener("fullscreenchange", () => {
+            const fullscreenIcon = document.querySelector("#fullscreen-btn i");
+            if (document.fullscreenElement) {
+                fullscreenIcon.classList.replace("fa-expand", "fa-compress");
+            } else {
+                fullscreenIcon.classList.replace("fa-compress", "fa-expand");
+            }
+        });
+
+        // =============================================
+        // Fungsi untuk toggle fullscreen
+        // =============================================
+        function toggleFullscreen() {
+            const fullscreenIcon = document.querySelector("#fullscreen-btn i");
+
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.error(
+                        `Error attempting to enable fullscreen: ${err.message}`
+                    );
+                });
+                fullscreenIcon.classList.replace("fa-expand", "fa-compress");
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                fullscreenIcon.classList.replace("fa-compress", "fa-expand");
+            }
         }
 
         // =============================================
         // FUNGSI TAMPILKAN ALERT (SWEETALERT STYLE)
         // =============================================
-        function showAlert(message, type = 'error') {
+        function showAlert(message, type = "error") {
             // Buat elemen alert
-            const alert = document.createElement('div');
-            alert.style.position = 'fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.padding = '15px 25px';
-            alert.style.borderRadius = '5px';
-            alert.style.color = 'white';
-            alert.style.fontWeight = '600';
-            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-            alert.style.zIndex = '1000';
-            alert.style.animation = 'fadeIn 0.3s ease';
+            const alert = document.createElement("div");
+            alert.style.position = "fixed";
+            alert.style.top = "20px";
+            alert.style.right = "20px";
+            alert.style.padding = "15px 25px";
+            alert.style.borderRadius = "5px";
+            alert.style.color = "white";
+            alert.style.fontWeight = "600";
+            alert.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+            alert.style.zIndex = "1000";
+            alert.style.animation = "fadeIn 0.3s ease";
             alert.textContent = message;
 
             // Set warna berdasarkan type
-            if (type === 'success') {
-                alert.style.backgroundColor = '#4BB543'; // Hijau
+            if (type === "success") {
+                alert.style.backgroundColor = "#4BB543"; // Hijau
             } else {
-                alert.style.backgroundColor = '#FF3333'; // Merah
+                alert.style.backgroundColor = "#FF3333"; // Merah
             }
 
             // Tambahkan ke body
@@ -1522,7 +1779,7 @@
 
             // Hilangkan setelah 3 detik
             setTimeout(() => {
-                alert.style.animation = 'fadeOut 0.3s ease';
+                alert.style.animation = "fadeOut 0.3s ease";
                 setTimeout(() => {
                     document.body.removeChild(alert);
                 }, 300);

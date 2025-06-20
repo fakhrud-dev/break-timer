@@ -305,14 +305,14 @@
             text-align: center;
             border: 2px solid var(--accent-color);
             box-shadow: 0 0 30px rgba(249, 168, 40, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease;
             background-color: var(--glass-bg);
             backdrop-filter: blur(10px);
         }
         
         .modal-overlay.show .modal {
-            transform: scale(1);
+            opacity: 1;
         }
         /* Animasi untuk ikon kopi */
         
@@ -343,9 +343,6 @@
         /* Fullscreen button */
         
         .fullscreen-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: none;
             border: none;
             color: var(--text-color);
@@ -489,12 +486,18 @@
             font-family: "Courier New", monospace;
             color: var(--text-color);
         }
+        /* Top Right Content */
+        
+        .top-right-content {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 1rem;
+        }
         /* Work session counter */
         
         .session-counter {
-            position: absolute;
-            top: 20px;
-            right: 110px;
             background-color: rgba(255, 255, 255, 0.1);
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -587,9 +590,6 @@
         /* Shortcut button */
         
         .shortcut-btn {
-            position: absolute;
-            top: 20px;
-            right: 70px;
             background: none;
             border: none;
             color: var(--text-color);
@@ -686,40 +686,6 @@
         .close-shortcut:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-        /* Mode selection animation */
-        
-        @keyframes modeSwitch {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        .mode-switch-animation {
-            animation: modeSwitch 0.3s ease;
-        }
-        /* Timer complete animation */
-        
-        @keyframes timerComplete {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        .timer-complete-animation {
-            animation: timerComplete 0.5s ease;
-        }
         /* Floating animation for particles */
         
         @keyframes float {
@@ -752,27 +718,13 @@
             }
         }
         
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
+        @keyframes blinkOpacity {
+            0%,
+            100% {
+                opacity: 1;
             }
             50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 10px rgba(249, 168, 40, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(249, 168, 40, 0.8);
-            }
-            100% {
-                box-shadow: 0 0 10px rgba(249, 168, 40, 0.5);
+                opacity: 0.5;
             }
         }
         
@@ -871,16 +823,18 @@
 <body class="work-mode">
     <div class="particles" id="particles"></div>
 
-    <div class="session-counter" id="session-counter">
-        <span id="pomodoro-count">0</span> sessions
-    </div>
+    <div class="top-right-content">
+        <div class="session-counter" id="session-counter">
+            <span id="pomodoro-count">0</span> sessions
+        </div>
 
-    <button class="fullscreen-btn" id="fullscreen-btn">
-      <i class="fas fa-expand"></i>
-    </button>
-    <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
-      <i class="fas fa-question"></i>
-    </button>
+        <button class="fullscreen-btn" id="fullscreen-btn">
+          <i class="fas fa-expand"></i>
+        </button>
+        <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
+          <i class="far fa-circle-question"></i>
+        </button>
+    </div>
 
     <div class="container">
         <h1>Break Time</h1>
@@ -1443,14 +1397,6 @@
         function updatePomodoroCount() {
             pomodoroCountElement.textContent = pomodoroCount;
 
-            // Animasi session counter saat bertambah
-            if (pomodoroCount > 0) {
-                sessionCounter.classList.add("timer-complete-animation");
-                setTimeout(() => {
-                    sessionCounter.classList.remove("timer-complete-animation");
-                }, 500);
-            }
-
             // Simpan count ke localStorage
             const today = new Date().toDateString();
             localStorage.setItem("pomodoroCount", pomodoroCount);
@@ -1528,7 +1474,8 @@
             isRunning = false;
             startBtn.textContent = "Start";
             resetBtn.disabled = true;
-            switchMode(currentMode); // Reset ke waktu awal mode saat ini
+            timerDisplay.style.animation = "none";
+            switchMode(currentMode);
         }
 
         // =============================================
@@ -1581,6 +1528,7 @@
                 timerDisplay.classList.remove("long-duration");
             }
 
+            timerDisplay.style.animation = "none";
             updateTimerDisplay();
             updateProgressCircle();
 
@@ -1589,12 +1537,6 @@
             isRunning = false;
             startBtn.textContent = "Start";
             resetBtn.disabled = true;
-
-            // Animasi mode switch
-            timerDisplay.classList.add("mode-switch-animation");
-            setTimeout(() => {
-                timerDisplay.classList.remove("mode-switch-animation");
-            }, 300);
 
             // Auto-start jika setting diaktifkan
             if (isAutoStartEnabled) {
@@ -1686,9 +1628,9 @@
         function updateTimerDisplay() {
             timerDisplay.textContent = formatTime(timeLeft);
 
-            // Animasi pulse saat waktu hampir habis
+            // Animasi kedip saat waktu hampir habis
             if (timeLeft <= 10 && timeLeft > 0) {
-                timerDisplay.style.animation = "pulse 1s infinite";
+                timerDisplay.style.animation = "blinkOpacity 1s infinite";
             } else {
                 timerDisplay.style.animation = "none";
             }

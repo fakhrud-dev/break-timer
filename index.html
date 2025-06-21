@@ -1073,7 +1073,7 @@
         const shortcutBtn = document.getElementById("shortcut-btn");
         const shortcutModal = document.getElementById("shortcut-modal");
         const closeShortcutBtn = document.getElementById("close-shortcut");
-
+    
         // =============================================
         // VARIABEL UTAMA TIMER
         // =============================================
@@ -1087,7 +1087,9 @@
         let isVibrateEnabled = true;
         let isAutoStartEnabled = false;
         let lastTickTime = 0;
-
+        let alarmInterval; // Untuk mengontrol alarm yang berulang
+        let vibrationInterval; // Untuk mengontrol getaran yang berulang
+    
         // =============================================
         // DATABASE QUOTE UNTUK BREAK TIME
         // =============================================
@@ -1108,7 +1110,7 @@
             "Kesuksesan adalah mendapatkan apa yang kamu inginkan. Kebahagiaan adalah menginginkan apa yang kamu dapatkan.",
             "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu.",
         ];
-
+    
         // =============================================
         // PENGATURAN DEFAULT
         // =============================================
@@ -1120,7 +1122,7 @@
             vibrateEnabled: true,
             autoStart: false,
         };
-
+    
         // =============================================
         // FUNGSI INISIALISASI APLIKASI
         // =============================================
@@ -1131,31 +1133,27 @@
             setupEventListeners();
             updatePomodoroCount();
             createParticles();
-
+    
             // Preload sounds
             alarmSound.load();
             tickSound.load();
-
+    
             // Tambahkan event listener untuk interaksi pertama
-            document.body.addEventListener('click', handleFirstInteraction, {
-                once: true
-            });
-            document.body.addEventListener('touchstart', handleFirstInteraction, {
-                once: true
-            });
+            document.body.addEventListener('click', handleFirstInteraction, { once: true });
+            document.body.addEventListener('touchstart', handleFirstInteraction, { once: true });
         }
-
+    
         function handleFirstInteraction() {
             console.log("First interaction detected");
             // Coba load semua audio
             alarmSound.load();
             tickSound.load();
-
+            
             // Set volume default
             alarmSound.volume = 1.0;
             tickSound.volume = 0.7;
         }
-
+    
         // =============================================
         // FUNGSI MEMBUAT PARTIKEL BACKGROUND
         // =============================================
@@ -1164,27 +1162,27 @@
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement("div");
                 particle.classList.add("particle");
-
+    
                 // Random size between 2px and 6px
                 const size = Math.random() * 4 + 2;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
-
+    
                 // Random position
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.bottom = `-${size}px`;
-
+    
                 // Random animation duration between 10s and 20s
                 const duration = Math.random() * 10 + 10;
                 particle.style.animationDuration = `${duration}s`;
-
+    
                 // Random delay
                 particle.style.animationDelay = `${Math.random() * 5}s`;
-
+    
                 particlesContainer.appendChild(particle);
             }
         }
-
+    
         // =============================================
         // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
         // =============================================
@@ -1202,19 +1200,19 @@
                 isVibrateEnabled = settings.vibrateEnabled;
                 isAutoStartEnabled = settings.autoStart;
             }
-
+    
             // Load session count
             const savedCount = localStorage.getItem("pomodoroCount");
             const lastDate = localStorage.getItem("lastPomodoroDate");
             const today = new Date().toDateString();
-
+    
             if (savedCount && lastDate === today) {
                 pomodoroCount = parseInt(savedCount);
             } else {
                 pomodoroCount = 0;
             }
         }
-
+    
         // =============================================
         // FUNGSI SAVE SETTINGS KE LOCALSTORAGE
         // =============================================
@@ -1227,7 +1225,7 @@
                 showAlert("Harap isi semua field pengaturan!");
                 return;
             }
-
+    
             settings = {
                 pomodoroTime: parseInt(pomodoroTimeInput.value),
                 shortBreakTime: parseInt(shortBreakTimeInput.value),
@@ -1236,19 +1234,19 @@
                 vibrateEnabled: vibrateToggle.checked,
                 autoStart: autoStartToggle.checked,
             };
-
+    
             localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
             isSoundEnabled = settings.soundEnabled;
             isVibrateEnabled = settings.vibrateEnabled;
             isAutoStartEnabled = settings.autoStart;
-
+    
             switchMode(currentMode); // Update timer dengan pengaturan baru
             closeSettings();
-
+    
             // Tampilkan notifikasi sukses
             showAlert("Pengaturan berhasil disimpan!", "success");
         }
-
+    
         // =============================================
         // FUNGSI RESET SESSION COUNT
         // =============================================
@@ -1257,7 +1255,7 @@
             updatePomodoroCount();
             showAlert("Session count has been reset!", "success");
         }
-
+    
         // =============================================
         // FUNGSI SETUP EVENT LISTENERS
         // =============================================
@@ -1277,7 +1275,7 @@
             closeSettingsBtn.addEventListener("click", closeSettings);
             shortcutBtn.addEventListener("click", openShortcutGuide);
             closeShortcutBtn.addEventListener("click", closeShortcutGuide);
-
+    
             // Keyboard shortcuts
             document.addEventListener("keydown", (e) => {
                 if (e.code === "Space") {
@@ -1318,7 +1316,7 @@
                 }
             });
         }
-
+    
         // =============================================
         // FUNGSI TOGGLE FULLSCREEN
         // =============================================
@@ -1335,7 +1333,7 @@
                 }
             }
         }
-
+    
         // =============================================
         // FUNGSI TOGGLE SOUND
         // =============================================
@@ -1344,7 +1342,7 @@
             settings.soundEnabled = isSoundEnabled;
             localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
         }
-
+    
         // =============================================
         // FUNGSI TOGGLE VIBRATE
         // =============================================
@@ -1353,7 +1351,7 @@
             settings.vibrateEnabled = isVibrateEnabled;
             localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
         }
-
+    
         // =============================================
         // FUNGSI FORMAT WAKTU (HANDLE JAM DAN MENIT)
         // =============================================
@@ -1361,7 +1359,7 @@
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const remainingSeconds = seconds % 60;
-
+    
             if (hours > 0) {
                 return `${hours.toString().padStart(2, "0")}:${minutes
             .toString()
@@ -1372,7 +1370,7 @@
             .padStart(2, "0")}`;
             }
         }
-
+    
         // =============================================
         // FUNGSI UPDATE PROGRESS CIRCLE
         // =============================================
@@ -1381,19 +1379,19 @@
             progressCircleFill.style.strokeDashoffset = 565.48 - progress;
             modalProgress.style.width = `${(progress / 565.48) * 100}%`;
         }
-
+    
         // =============================================
         // FUNGSI UPDATE POMODORO COUNT
         // =============================================
         function updatePomodoroCount() {
             pomodoroCountElement.textContent = pomodoroCount;
-
+    
             // Simpan count ke localStorage
             const today = new Date().toDateString();
             localStorage.setItem("pomodoroCount", pomodoroCount);
             localStorage.setItem("lastPomodoroDate", today);
         }
-
+    
         // =============================================
         // FUNGSI TOGGLE TIMER (START/PAUSE)
         // =============================================
@@ -1404,7 +1402,7 @@
                 startTimer();
             }
         }
-
+    
         // =============================================
         // FUNGSI START TIMER
         // =============================================
@@ -1413,12 +1411,12 @@
                 isRunning = true;
                 startBtn.textContent = "Pause";
                 resetBtn.disabled = false;
-
+    
                 timer = setInterval(() => {
                     timeLeft--;
                     updateTimerDisplay();
                     updateProgressCircle();
-
+    
                     // Play tick sound every second (but not too loud)
                     const now = Date.now();
                     if (
@@ -1435,7 +1433,7 @@
                         } catch (e) {
                             console.error("Tick sound failed:", e);
                         }
-
+    
                         // Vibrate if enabled
                         if (isVibrateEnabled && navigator.vibrate) {
                             try {
@@ -1445,7 +1443,7 @@
                             }
                         }
                     }
-
+    
                     if (timeLeft <= 0) {
                         clearInterval(timer);
                         timerComplete();
@@ -1453,7 +1451,7 @@
                 }, 1000);
             }
         }
-
+    
         // =============================================
         // FUNGSI PAUSE TIMER
         // =============================================
@@ -1464,7 +1462,7 @@
                 startBtn.textContent = "Resume";
             }
         }
-
+    
         // =============================================
         // FUNGSI RESET TIMER
         // =============================================
@@ -1476,18 +1474,18 @@
             timerDisplay.style.animation = "none";
             switchMode(currentMode);
         }
-
+    
         // =============================================
         // FUNGSI SWITCH MODE (WORK/SHORT BREAK/LONG BREAK)
         // =============================================
         function switchMode(mode) {
             currentMode = mode;
-
+    
             // Update tombol aktif
             pomodoroBtn.classList.remove("active");
             shortBreakBtn.classList.remove("active");
             longBreakBtn.classList.remove("active");
-
+    
             // Set waktu berdasarkan mode
             switch (mode) {
                 case "pomodoro":
@@ -1506,32 +1504,32 @@
                     body.className = "break-mode";
                     break;
             }
-
+    
             totalSeconds = timeLeft;
-
+    
             // Update class untuk timer panjang
             if (timeLeft >= 3600) {
                 timerDisplay.classList.add("long-duration");
             } else {
                 timerDisplay.classList.remove("long-duration");
             }
-
+    
             timerDisplay.style.animation = "none";
             updateTimerDisplay();
             updateProgressCircle();
-
+    
             // Reset state timer
             clearInterval(timer);
             isRunning = false;
             startBtn.textContent = "Start";
             resetBtn.disabled = true;
-
+    
             // Auto-start jika setting diaktifkan
             if (isAutoStartEnabled) {
                 startTimer();
             }
         }
-
+    
         // =============================================
         // FUNGSI KETIKA TIMER SELESAI
         // =============================================
@@ -1539,44 +1537,22 @@
             isRunning = false;
             startBtn.textContent = "Start";
             resetBtn.disabled = true;
-
-            // Mainkan suara alarm
-            if (isSoundEnabled) {
-                try {
-                    alarmSound.currentTime = 0;
-                    alarmSound.volume = 1.0; // Set volume maksimum untuk mobile
-                    const playPromise = alarmSound.play();
-
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            // Tampilkan tombol untuk memutar suara manual
-                            showAudioPermissionAlert();
-                        });
-                    }
-                } catch (e) {
-                    console.error("Audio play failed:", e);
-                    showAudioPermissionAlert();
-                }
-            }
-
-            // Vibrate if enabled
-            if (isVibrateEnabled && navigator.vibrate) {
-                try {
-                    navigator.vibrate([200, 100, 200, 100, 200]);
-                } catch (e) {
-                    console.error("Vibration failed:", e);
-                }
-            }
-
+    
+            // Hentikan alarm dan getaran yang mungkin sedang berjalan
+            stopAlarmAndVibration();
+    
+            // Mulai alarm dan getaran
+            startAlarmAndVibration();
+    
             // Tampilkan modal dengan quote acak
             showModal();
-
+    
             // Update pomodoro count jika mode work
             if (currentMode === "pomodoro") {
                 pomodoroCount++;
                 updatePomodoroCount();
             }
-
+    
             // Notifikasi desktop jika didukung
             if ("Notification" in window && Notification.permission === "granted") {
                 const notification = new Notification("Timer Complete!", {
@@ -1586,7 +1562,84 @@
                 });
             }
         }
-
+    
+        // Fungsi untuk memulai alarm dan getaran
+        function startAlarmAndVibration() {
+            // Mainkan suara alarm
+            if (isSoundEnabled) {
+                try {
+                    // Set loop untuk alarm sound
+                    alarmSound.loop = true;
+                    alarmSound.currentTime = 0;
+                    alarmSound.volume = 1.0;
+                    const playPromise = alarmSound.play();
+    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Tampilkan tombol untuk memutar suara manual
+                            showAudioPermissionAlert();
+                        });
+                    }
+    
+                    // Set interval untuk memastikan alarm tetap berbunyi
+                    alarmInterval = setInterval(() => {
+                        if (alarmSound.paused) {
+                            alarmSound.currentTime = 0;
+                            alarmSound.play().catch(e => console.log("Alarm play failed:", e));
+                        }
+                    }, 1000);
+                } catch (e) {
+                    console.error("Audio play failed:", e);
+                    showAudioPermissionAlert();
+                }
+            }
+    
+            // Getaran jika diaktifkan
+            if (isVibrateEnabled && navigator.vibrate) {
+                try {
+                    // Pola getaran: 500ms on, 300ms off, 500ms on, 300ms off, 500ms on
+                    const vibrationPattern = [500, 300, 500, 300, 500];
+                    navigator.vibrate(vibrationPattern);
+    
+                    // Set interval untuk mengulang getaran
+                    vibrationInterval = setInterval(() => {
+                        if ("vibrate" in navigator) {
+                            navigator.vibrate(vibrationPattern).catch(e => console.log("Vibration failed:", e));
+                        }
+                    }, 3000); // Ulang setiap 3 detik
+                } catch (e) {
+                    console.error("Vibration failed:", e);
+                }
+            }
+        }
+    
+        // Fungsi untuk menghentikan alarm dan getaran
+        function stopAlarmAndVibration() {
+            // Hentikan alarm sound
+            if (alarmSound) {
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+                alarmSound.loop = false;
+            }
+    
+            // Hentikan interval alarm
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+    
+            // Hentikan getaran
+            if ("vibrate" in navigator) {
+                navigator.vibrate(0);
+            }
+    
+            // Hentikan interval getaran
+            if (vibrationInterval) {
+                clearInterval(vibrationInterval);
+                vibrationInterval = null;
+            }
+        }
+    
         function showAudioPermissionAlert() {
             const alert = document.createElement("div");
             alert.innerHTML = `
@@ -1600,7 +1653,7 @@
                     </button>
                 </div>
             `;
-
+    
             const button = alert.querySelector("button");
             button.addEventListener("click", () => {
                 // Coba mainkan suara setelah interaksi pengguna
@@ -1608,9 +1661,9 @@
                 alarmSound.play().catch(e => console.error("Still can't play:", e));
                 document.body.removeChild(alert);
             });
-
+    
             document.body.appendChild(alert);
-
+    
             // Hapus otomatis setelah 10 detik
             setTimeout(() => {
                 if (document.body.contains(alert)) {
@@ -1618,35 +1671,38 @@
                 }
             }, 10000);
         }
-
+    
         // =============================================
         // FUNGSI TAMPILKAN MODAL BREAK TIME
         // =============================================
         function showModal() {
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             randomQuoteElement.textContent = `"${randomQuote}"`;
-
+    
             // Set judul modal berdasarkan mode
             if (currentMode === "pomodoro") {
                 modalTitle.textContent = "Time for a Break!";
             } else {
                 modalTitle.textContent = "Back to Work!";
             }
-
+    
             modalOverlay.classList.add("show");
-
+    
             // Request notification permission jika belum
             if ("Notification" in window && Notification.permission !== "denied") {
                 Notification.requestPermission();
             }
         }
-
+    
         // =============================================
         // FUNGSI TUTUP MODAL
         // =============================================
         function closeModal() {
+            // Hentikan alarm dan getaran sebelum menutup modal
+            stopAlarmAndVibration();
+    
             modalOverlay.classList.remove("show");
-
+    
             // Tentukan mode berikutnya setelah tutup modal
             if (currentMode === "pomodoro") {
                 if (pomodoroCount % 4 === 0) {
@@ -1658,13 +1714,13 @@
                 switchMode("pomodoro");
             }
         }
-
+    
         // =============================================
         // FUNGSI UPDATE TAMPILAN TIMER
         // =============================================
         function updateTimerDisplay() {
             timerDisplay.textContent = formatTime(timeLeft);
-
+    
             // Animasi kedip saat waktu hampir habis
             if (timeLeft <= 10 && timeLeft > 0) {
                 timerDisplay.style.animation = "blinkOpacity 1s infinite";
@@ -1672,31 +1728,31 @@
                 timerDisplay.style.animation = "none";
             }
         }
-
+    
         // =============================================
         // FUNGSI BUKA SETTINGS MODAL
         // =============================================
         function openSettings() {
             settingsModal.classList.add("show");
         }
-
+    
         // =============================================
         // FUNGSI TUTUP SETTINGS MODAL
         // =============================================
         function closeSettings() {
             settingsModal.classList.remove("show");
         }
-
+    
         // Fungsi untuk membuka shortcut guide
         function openShortcutGuide() {
             shortcutModal.classList.add("show");
         }
-
+    
         // Fungsi untuk menutup shortcut guide
         function closeShortcutGuide() {
             shortcutModal.classList.remove("show");
         }
-
+    
         // Fungsi untuk menangani perubahan fullscreen
         document.addEventListener("fullscreenchange", () => {
             const fullscreenIcon = document.querySelector("#fullscreen-btn i");
@@ -1706,7 +1762,7 @@
                 fullscreenIcon.classList.replace("fa-compress", "fa-expand");
             }
         });
-
+    
         // =============================================
         // FUNGSI TAMPILKAN ALERT (SWEETALERT STYLE)
         // =============================================
@@ -1724,17 +1780,17 @@
             alert.style.zIndex = "1000";
             alert.style.animation = "fadeIn 0.3s ease";
             alert.textContent = message;
-
+    
             // Set warna berdasarkan type
             if (type === "success") {
                 alert.style.backgroundColor = "#4BB543"; // Hijau
             } else {
                 alert.style.backgroundColor = "#FF3333"; // Merah
             }
-
+    
             // Tambahkan ke body
             document.body.appendChild(alert);
-
+    
             // Hilangkan setelah 3 detik
             setTimeout(() => {
                 alert.style.animation = "fadeOut 0.3s ease";
@@ -1743,7 +1799,7 @@
                 }, 300);
             }, 3000);
         }
-
+    
         // =============================================
         // INISIALISASI APLIKASI
         // =============================================

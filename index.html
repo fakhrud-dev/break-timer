@@ -761,11 +761,39 @@
         }
         
         .audio-permission-alert {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             animation: slideUp 0.3s ease forwards;
+            max-width: 90%;
         }
         
         .audio-permission-alert.hide {
             animation: slideDown 0.3s ease forwards;
+        }
+        
+        .audio-permission-btn {
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-permission-btn:hover {
+            background-color: rgba(26, 26, 46, 0.9);
         }
         /* 
 * THEME BERDASARKAN MODE
@@ -1133,10 +1161,8 @@
             setupEventListeners();
             updatePomodoroCount();
             createParticles();
-    
-            // Preload sounds
-            alarmSound.load();
-            tickSound.load();
+
+            initAudio();
     
             // Tambahkan event listener untuk interaksi pertama
             document.body.addEventListener('click', handleFirstInteraction, { once: true });
@@ -1148,6 +1174,23 @@
             // Coba load semua audio
             alarmSound.load();
             tickSound.load();
+            
+            // Coba mainkan audio kosong untuk memastikan izin
+            try {
+                const playPromise = alarmSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        alarmSound.pause();
+                        alarmSound.currentTime = 0;
+                    }).catch(e => {
+                        console.log("Autoplay prevented, showing alert");
+                        showAudioPermissionAlert();
+                    });
+                }
+            } catch (e) {
+                console.error("Audio play failed:", e);
+                showAudioPermissionAlert();
+            }
             
             // Set volume default
             alarmSound.volume = 1.0;
@@ -1182,6 +1225,40 @@
                 particlesContainer.appendChild(particle);
             }
         }
+
+        // =============================================
+        // FUNGSI INIT AUDIO
+        // =============================================
+        function initAudio() {
+            // Buat audio context
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioContext = new AudioContext();
+                
+                // Coba resume context saat interaksi pertama
+                document.body.addEventListener('click', () => {
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                }, { once: true });
+                
+                // Coba mainkan audio kosong untuk meminta izin
+                const oscillator = audioContext.createOscillator();
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio initialization error:", e);
+            }
+            
+            // Preload sounds
+            alarmSound.load();
+            tickSound.load();
+            
+            // Set volume default
+            alarmSound.volume = 1.0;
+            tickSound.volume = 0.7;
+        }
     
         // =============================================
         // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
@@ -1193,12 +1270,18 @@
                 pomodoroTimeInput.value = settings.pomodoroTime;
                 shortBreakTimeInput.value = settings.shortBreakTime;
                 longBreakTimeInput.value = settings.longBreakTime;
-                soundToggle.checked = settings.soundEnabled;
-                vibrateToggle.checked = settings.vibrateEnabled;
+                soundToggle.checked = settings.soundEnabled !== false; // Default true
+                vibrateToggle.checked = settings.vibrateEnabled !== false; // Default true
                 autoStartToggle.checked = settings.autoStart;
-                isSoundEnabled = settings.soundEnabled;
-                isVibrateEnabled = settings.vibrateEnabled;
+                isSoundEnabled = settings.soundEnabled !== false; // Default true
+                isVibrateEnabled = settings.vibrateEnabled !== false; // Default true
                 isAutoStartEnabled = settings.autoStart;
+            } else {
+                // Default settings jika tidak ada yang tersimpan
+                soundToggle.checked = true;
+                vibrateToggle.checked = true;
+                isSoundEnabled = true;
+                isVibrateEnabled = true;
             }
     
             // Load session count
@@ -1435,9 +1518,15 @@
                         }
     
                         // Vibrate if enabled
-                        if (isVibrateEnabled && navigator.vibrate) {
+                        if (isVibrateEnabled && "vibrate" in navigator) {
                             try {
-                                navigator.vibrate(100);
+                                // Pola getaran yang lebih panjang
+                                const vibrationPattern = [500, 300, 500, 300, 500, 300, 500];
+                                navigator.vibrate(vibrationPattern);
+                                
+                                vibrationInterval = setInterval(() => {
+                                    navigator.vibrate(vibrationPattern);
+                                }, 4000);
                             } catch (e) {
                                 console.error("Vibration failed:", e);
                             }

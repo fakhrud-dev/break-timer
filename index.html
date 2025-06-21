@@ -12,7 +12,7 @@
         * Menggunakan sistem warna yang modern dengan gradient
         */
         
-         :root {
+        :root {
             --primary-color: #2b5876;
             --secondary-color: #4e4376;
             --dark-color: #1a1a2e;
@@ -31,9 +31,9 @@
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
         /* 
-        * STYLE UTAMA BODY
-        * Menggunakan gradient background dan transition untuk efek smooth
-        */
+* STYLE UTAMA BODY
+* Menggunakan gradient background dan transition untuk efek smooth
+*/
         
         body {
             background-color: var(--light-color);
@@ -48,10 +48,10 @@
             overflow: hidden;
         }
         /* 
-        * CONTAINER UTAMA
-        * Menggunakan backdrop-filter untuk efek glassmorphism
-        * Border dan shadow untuk depth
-        */
+* CONTAINER UTAMA
+* Menggunakan backdrop-filter untuk efek glassmorphism
+* Border dan shadow untuk depth
+*/
         
         .container {
             width: 90%;
@@ -78,9 +78,9 @@
             text-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
         /* 
-        * TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
-        * Desain tombol dengan transition dan active state
-        */
+* TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
+* Desain tombol dengan transition dan active state
+*/
         
         .mode-selector {
             display: flex;
@@ -109,9 +109,9 @@
             box-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
         /* 
-        * TIMER DISPLAY
-        * Font monospace untuk tampilan timer yang konsisten
-        */
+* TIMER DISPLAY
+* Font monospace untuk tampilan timer yang konsisten
+*/
         
         .timer-container {
             position: relative;
@@ -135,9 +135,9 @@
             font-size: 3.5rem;
         }
         /* 
-        * TOMBOL KONTROL (START/PAUSE/RESET)
-        * Desain tombol dengan efek hover dan active
-        */
+* TOMBOL KONTROL (START/PAUSE/RESET)
+* Desain tombol dengan efek hover dan active
+*/
         
         .controls {
             display: flex;
@@ -194,9 +194,9 @@
             box-shadow: none !important;
         }
         /* 
-        * PANEL SETTINGS
-        * Animasi fadeIn untuk transisi smooth
-        */
+* PANEL SETTINGS
+* Animasi fadeIn untuk transisi smooth
+*/
         
         .settings {
             margin-top: 2rem;
@@ -271,9 +271,9 @@
             margin-top: 0.5rem;
         }
         /* 
-        * MODAL BREAK TIME
-        * Tampilan modal saat timer selesai
-        */
+* MODAL BREAK TIME
+* Tampilan modal saat timer selesai
+*/
         
         .modal-overlay {
             position: fixed;
@@ -736,10 +736,41 @@
                 opacity: 0;
             }
         }
+        /* Style untuk modal audio permission */
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+        
+        .audio-permission-alert {
+            animation: slideUp 0.3s ease forwards;
+        }
+        
+        .audio-permission-alert.hide {
+            animation: slideDown 0.3s ease forwards;
+        }
         /* 
-        * THEME BERDASARKAN MODE
-        * Work mode dan break mode memiliki background berbeda
-        */
+* THEME BERDASARKAN MODE
+* Work mode dan break mode memiliki background berbeda
+*/
         
         body.work-mode {
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
@@ -749,9 +780,9 @@
             background-image: linear-gradient(to right top, #1a2a3a, #0f1a23);
         }
         /* 
-        * RESPONSIVE DESIGN
-        * Penyesuaian untuk mobile devices
-        */
+* RESPONSIVE DESIGN
+* Penyesuaian untuk mobile devices
+*/
         
         @media (max-width: 768px) {
             .timer {
@@ -827,7 +858,7 @@
         <div class="session-counter" id="session-counter">
             <span id="pomodoro-count">0</span> sessions
         </div>
-        
+
         <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
           <i class="far fa-circle-question"></i>
         </button>
@@ -974,16 +1005,6 @@
 
             <div class="toggle-group">
                 <label class="toggle-label">
-            <span>Focus Sound</span>
-            <label class="switch">
-              <input type="checkbox" id="focus-sound-toggle" />
-              <span class="slider"></span>
-            </label>
-                </label>
-            </div>
-
-            <div class="toggle-group">
-                <label class="toggle-label">
             <span>Auto-start next timer</span>
             <label class="switch">
               <input type="checkbox" id="auto-start" />
@@ -1012,12 +1033,6 @@
         type="audio/mpeg"
       />
     </audio>
-    <audio id="focus-sound" preload="auto" loop>
-      <source
-        src="https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1681.mp3"
-        type="audio/mpeg"
-      />
-    </audio>
 
     <script>
         // =============================================
@@ -1037,12 +1052,10 @@
         const modalProgress = document.getElementById("modal-progress");
         const soundToggle = document.getElementById("sound-toggle");
         const vibrateToggle = document.getElementById("vibrate-toggle");
-        const focusSoundToggle = document.getElementById("focus-sound-toggle");
         const autoStartToggle = document.getElementById("auto-start");
         const fullscreenBtn = document.getElementById("fullscreen-btn");
         const alarmSound = document.getElementById("alarm-sound");
         const tickSound = document.getElementById("tick-sound");
-        const focusSound = document.getElementById("focus-sound");
         const body = document.body;
         const pomodoroCountElement = document.getElementById("pomodoro-count");
         const sessionCounter = document.getElementById("session-counter");
@@ -1072,7 +1085,6 @@
         let totalSeconds = timeLeft;
         let isSoundEnabled = true;
         let isVibrateEnabled = true;
-        let isFocusSoundEnabled = false;
         let isAutoStartEnabled = false;
         let lastTickTime = 0;
 
@@ -1106,7 +1118,6 @@
             longBreakTime: 15,
             soundEnabled: true,
             vibrateEnabled: true,
-            focusSoundEnabled: false,
             autoStart: false,
         };
 
@@ -1124,10 +1135,25 @@
             // Preload sounds
             alarmSound.load();
             tickSound.load();
-            focusSound.load();
 
-            // Set volume for focus sound
-            focusSound.volume = 0.3;
+            // Tambahkan event listener untuk interaksi pertama
+            document.body.addEventListener('click', handleFirstInteraction, {
+                once: true
+            });
+            document.body.addEventListener('touchstart', handleFirstInteraction, {
+                once: true
+            });
+        }
+
+        function handleFirstInteraction() {
+            console.log("First interaction detected");
+            // Coba load semua audio
+            alarmSound.load();
+            tickSound.load();
+
+            // Set volume default
+            alarmSound.volume = 1.0;
+            tickSound.volume = 0.7;
         }
 
         // =============================================
@@ -1171,21 +1197,10 @@
                 longBreakTimeInput.value = settings.longBreakTime;
                 soundToggle.checked = settings.soundEnabled;
                 vibrateToggle.checked = settings.vibrateEnabled;
-                focusSoundToggle.checked = settings.focusSoundEnabled;
                 autoStartToggle.checked = settings.autoStart;
                 isSoundEnabled = settings.soundEnabled;
                 isVibrateEnabled = settings.vibrateEnabled;
-                isFocusSoundEnabled = settings.focusSoundEnabled;
                 isAutoStartEnabled = settings.autoStart;
-
-                // Update focus sound based on setting
-                if (isFocusSoundEnabled && currentMode === "pomodoro") {
-                    focusSound
-                        .play()
-                        .catch((e) => console.log("Autoplay prevented:", e));
-                } else {
-                    focusSound.pause();
-                }
             }
 
             // Load session count
@@ -1219,22 +1234,13 @@
                 longBreakTime: parseInt(longBreakTimeInput.value),
                 soundEnabled: soundToggle.checked,
                 vibrateEnabled: vibrateToggle.checked,
-                focusSoundEnabled: focusSoundToggle.checked,
                 autoStart: autoStartToggle.checked,
             };
 
             localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
             isSoundEnabled = settings.soundEnabled;
             isVibrateEnabled = settings.vibrateEnabled;
-            isFocusSoundEnabled = settings.focusSoundEnabled;
             isAutoStartEnabled = settings.autoStart;
-
-            // Handle focus sound
-            if (isFocusSoundEnabled && currentMode === "pomodoro") {
-                focusSound.play().catch((e) => console.log("Autoplay prevented:", e));
-            } else {
-                focusSound.pause();
-            }
 
             switchMode(currentMode); // Update timer dengan pengaturan baru
             closeSettings();
@@ -1267,7 +1273,6 @@
             modalBtn.addEventListener("click", closeModal);
             soundToggle.addEventListener("change", toggleSound);
             vibrateToggle.addEventListener("change", toggleVibrate);
-            focusSoundToggle.addEventListener("change", toggleFocusSound);
             fullscreenBtn.addEventListener("click", toggleFullscreen);
             closeSettingsBtn.addEventListener("click", closeSettings);
             shortcutBtn.addEventListener("click", openShortcutGuide);
@@ -1350,21 +1355,6 @@
         }
 
         // =============================================
-        // FUNGSI TOGGLE FOCUS SOUND
-        // =============================================
-        function toggleFocusSound() {
-            isFocusSoundEnabled = focusSoundToggle.checked;
-            settings.focusSoundEnabled = isFocusSoundEnabled;
-            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
-
-            if (isFocusSoundEnabled && currentMode === "pomodoro") {
-                focusSound.play().catch((e) => console.log("Autoplay prevented:", e));
-            } else {
-                focusSound.pause();
-            }
-        }
-
-        // =============================================
         // FUNGSI FORMAT WAKTU (HANDLE JAM DAN MENIT)
         // =============================================
         function formatTime(seconds) {
@@ -1437,14 +1427,22 @@
                         timeLeft > 0 &&
                         timeLeft <= 10
                     ) {
-                        tickSound.currentTime = 0;
-                        tickSound.volume = 0.3;
-                        tickSound.play();
-                        lastTickTime = now;
+                        try {
+                            tickSound.currentTime = 0;
+                            tickSound.volume = 0.7; // Naikkan volume untuk mobile
+                            tickSound.play();
+                            lastTickTime = now;
+                        } catch (e) {
+                            console.error("Tick sound failed:", e);
+                        }
 
                         // Vibrate if enabled
                         if (isVibrateEnabled && navigator.vibrate) {
-                            navigator.vibrate(100);
+                            try {
+                                navigator.vibrate(100);
+                            } catch (e) {
+                                console.error("Vibration failed:", e);
+                            }
                         }
                     }
 
@@ -1496,27 +1494,16 @@
                     timeLeft = settings.pomodoroTime * 60;
                     pomodoroBtn.classList.add("active");
                     body.className = "work-mode";
-
-                    // Handle focus sound
-                    if (isFocusSoundEnabled) {
-                        focusSound
-                            .play()
-                            .catch((e) => console.log("Autoplay prevented:", e));
-                    } else {
-                        focusSound.pause();
-                    }
                     break;
                 case "shortBreak":
                     timeLeft = settings.shortBreakTime * 60;
                     shortBreakBtn.classList.add("active");
                     body.className = "break-mode";
-                    focusSound.pause();
                     break;
                 case "longBreak":
                     timeLeft = settings.longBreakTime * 60;
                     longBreakBtn.classList.add("active");
                     body.className = "break-mode";
-                    focusSound.pause();
                     break;
             }
 
@@ -1555,13 +1542,30 @@
 
             // Mainkan suara alarm
             if (isSoundEnabled) {
-                alarmSound.currentTime = 0;
-                alarmSound.play();
+                try {
+                    alarmSound.currentTime = 0;
+                    alarmSound.volume = 1.0; // Set volume maksimum untuk mobile
+                    const playPromise = alarmSound.play();
+
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Tampilkan tombol untuk memutar suara manual
+                            showAudioPermissionAlert();
+                        });
+                    }
+                } catch (e) {
+                    console.error("Audio play failed:", e);
+                    showAudioPermissionAlert();
+                }
             }
 
             // Vibrate if enabled
             if (isVibrateEnabled && navigator.vibrate) {
-                navigator.vibrate([200, 100, 200, 100, 200]);
+                try {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                } catch (e) {
+                    console.error("Vibration failed:", e);
+                }
             }
 
             // Tampilkan modal dengan quote acak
@@ -1581,6 +1585,38 @@
                     icon: "https://cdn-icons-png.flaticon.com/512/2913/2913103.png",
                 });
             }
+        }
+
+        function showAudioPermissionAlert() {
+            const alert = document.createElement("div");
+            alert.innerHTML = `
+                <div style="position: fixed; bottom: 20px; left: 20px; right: 20px; 
+                            background: #333; color: white; padding: 15px; 
+                            border-radius: 8px; z-index: 1000; text-align: center;">
+                    <p>Tap here to enable sound notifications</p>
+                    <button style="background: #4CAF50; border: none; color: white; 
+                                padding: 8px 16px; margin-top: 8px; border-radius: 4px;">
+                        Enable Sound
+                    </button>
+                </div>
+            `;
+
+            const button = alert.querySelector("button");
+            button.addEventListener("click", () => {
+                // Coba mainkan suara setelah interaksi pengguna
+                alarmSound.currentTime = 0;
+                alarmSound.play().catch(e => console.error("Still can't play:", e));
+                document.body.removeChild(alert);
+            });
+
+            document.body.appendChild(alert);
+
+            // Hapus otomatis setelah 10 detik
+            setTimeout(() => {
+                if (document.body.contains(alert)) {
+                    document.body.removeChild(alert);
+                }
+            }, 10000);
         }
 
         // =============================================
@@ -1670,27 +1706,6 @@
                 fullscreenIcon.classList.replace("fa-compress", "fa-expand");
             }
         });
-
-        // =============================================
-        // Fungsi untuk toggle fullscreen
-        // =============================================
-        function toggleFullscreen() {
-            const fullscreenIcon = document.querySelector("#fullscreen-btn i");
-
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch((err) => {
-                    console.error(
-                        `Error attempting to enable fullscreen: ${err.message}`
-                    );
-                });
-                fullscreenIcon.classList.replace("fa-expand", "fa-compress");
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-                fullscreenIcon.classList.replace("fa-compress", "fa-expand");
-            }
-        }
 
         // =============================================
         // FUNGSI TAMPILKAN ALERT (SWEETALERT STYLE)

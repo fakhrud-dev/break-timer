@@ -2,36 +2,40 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Break Time - Pomodoro Timer</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Break Time</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         /* 
         * VARIABEL CSS UNTUK WARNA DAN TEMA
         * Menggunakan sistem warna yang modern dengan gradient
         */
+        
         :root {
             --primary-color: #2b5876;
             --secondary-color: #4e4376;
             --dark-color: #1a1a2e;
             --light-color: #16213e;
-            --accent-color: #f9a828;  /* Warna aksen oranye untuk highlight */
-            --text-color: #e6e6e6;    /* Warna teks utama */
+            --accent-color: #f9a828;
+            --text-color: #e6e6e6;
+            --glass-bg: rgba(26, 26, 46, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
-        
         /* RESET CSS DASAR */
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
-        
         /* 
-        * STYLE UTAMA BODY
-        * Menggunakan gradient background dan transition untuk efek smooth
-        */
-        body { 
+* STYLE UTAMA BODY
+* Menggunakan gradient background dan transition untuk efek smooth
+*/
+        
+        body {
             background-color: var(--light-color);
             color: var(--text-color);
             min-height: 100vh;
@@ -41,13 +45,14 @@
             justify-content: center;
             transition: background-color 0.5s ease;
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
+            overflow: hidden;
         }
-        
         /* 
-        * CONTAINER UTAMA
-        * Menggunakan backdrop-filter untuk efek glassmorphism
-        * Border dan shadow untuk depth
-        */
+* CONTAINER UTAMA
+* Menggunakan backdrop-filter untuk efek glassmorphism
+* Border dan shadow untuk depth
+*/
+        
         .container {
             width: 90%;
             max-width: 500px;
@@ -55,24 +60,28 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            background-color: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);  /* Efek blur modern */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            /* Efek blur modern */
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 10;
         }
-        
         /* HEADER UTAMA */
+        
         h1 {
             color: var(--accent-color);
             margin-bottom: 1rem;
             font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
-        
         /* 
-        * TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
-        * Desain tombol dengan transition dan active state
-        */
+* TOGGLE MODE (WORK/SHORT BREAK/LONG BREAK)
+* Desain tombol dengan transition dan active state
+*/
+        
         .mode-selector {
             display: flex;
             justify-content: center;
@@ -99,11 +108,11 @@
             color: var(--dark-color);
             box-shadow: 0 0 15px rgba(249, 168, 40, 0.5);
         }
-        
         /* 
-        * TIMER DISPLAY
-        * Font monospace untuk tampilan timer yang konsisten
-        */
+* TIMER DISPLAY
+* Font monospace untuk tampilan timer yang konsisten
+*/
+        
         .timer-container {
             position: relative;
             margin: 1.5rem 0;
@@ -112,22 +121,24 @@
         .timer {
             font-size: 5rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;  /* Font fixed-width */
+            font-family: "Courier New", monospace;
+            /* Font fixed-width */
             color: var(--text-color);
             position: relative;
             z-index: 2;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
             transition: font-size 0.3s ease;
+            margin-bottom: 1rem;
         }
         
         .timer.long-duration {
             font-size: 3.5rem;
         }
-        
         /* 
-        * TOMBOL KONTROL (START/PAUSE/RESET)
-        * Desain tombol dengan efek hover dan active
-        */
+* TOMBOL KONTROL (START/PAUSE/RESET)
+* Desain tombol dengan efek hover dan active
+*/
+        
         .controls {
             display: flex;
             justify-content: center;
@@ -146,8 +157,8 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
         /* Tombol utama (Start/Pause) */
+        
         .btn-primary {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -163,8 +174,8 @@
             transform: translateY(2px);
             box-shadow: 0 2px 0 rgba(201, 134, 24, 0.8);
         }
-        
         /* Tombol sekunder (Reset) */
+        
         .btn-secondary {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
@@ -174,26 +185,26 @@
         .btn-secondary:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
-        
         /* State disabled untuk tombol */
+        
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
         }
-        
         /* 
-        * PANEL SETTINGS
-        * Animasi fadeIn untuk transisi smooth
-        */
+* PANEL SETTINGS
+* Animasi fadeIn untuk transisi smooth
+*/
+        
         .settings {
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
         /* Tombol settings dengan efek rotate */
+        
         .settings-btn {
             background: none;
             border: none;
@@ -201,13 +212,21 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto;
         }
         
         .settings-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
             transform: rotate(90deg);
         }
-        
         /* Panel settings yang bisa di-toggle */
+        
         .settings-panel {
             display: none;
             margin-top: 1rem;
@@ -217,8 +236,8 @@
         .settings-panel.show {
             display: block;
         }
-        
         /* Form group untuk input settings */
+        
         .form-group {
             margin-bottom: 1rem;
             text-align: left;
@@ -239,8 +258,8 @@
             border-radius: 5px;
             color: var(--text-color);
         }
-        
         /* Tombol save settings */
+        
         .save-btn {
             background-color: var(--accent-color);
             color: var(--dark-color);
@@ -251,11 +270,11 @@
             font-weight: 600;
             margin-top: 0.5rem;
         }
-        
         /* 
-        * MODAL BREAK TIME
-        * Tampilan modal saat timer selesai
-        */
+* MODAL BREAK TIME
+* Tampilan modal saat timer selesai
+*/
+        
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -286,21 +305,398 @@
             text-align: center;
             border: 2px solid var(--accent-color);
             box-shadow: 0 0 30px rgba(249, 168, 40, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(10px);
         }
         
         .modal-overlay.show .modal {
-            transform: scale(1);
+            opacity: 1;
         }
-        
         /* Animasi untuk ikon kopi */
+        
         .coffee-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             display: inline-block;
             animation: sway 3s infinite ease-in-out;
             transform-origin: bottom center;
+        }
+        /* Progress bar container */
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        /* Fullscreen button */
+        
+        .fullscreen-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .fullscreen-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .fullscreen-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Notification sound toggle */
+        
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+        /* Floating particles background */
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(249, 168, 40, 0.6);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        /* Circular progress indicator */
+        
+        .circular-progress {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .progress-circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+        }
+        
+        .progress-circle-fill {
+            fill: none;
+            stroke: var(--accent-color);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .timer-inside-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            color: var(--text-color);
+        }
+        /* Top Right Content */
+        
+        .top-right-content {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 1rem;
+        }
+        /* Work session counter */
+        
+        .session-counter {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .session-counter span {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        /* Settings modal */
+        
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-modal.show {
+            display: flex;
+        }
+        
+        .settings-modal-content {
+            background-color: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .settings-modal-header h2 {
+            color: var(--accent-color);
+        }
+        
+        .close-settings {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .close-settings:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Delete session button */
+        
+        .delete-session-btn {
+            background-color: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-session-btn:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+        /* Shortcut button */
+        
+        .shortcut-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .shortcut-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Shortcut guide modal */
+        
+        .shortcut-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shortcut-modal.show {
+            display: flex;
+        }
+        
+        .shortcut-modal-content {
+            background-color: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .shortcut-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .shortcut-modal-header h2 {
+            color: var(--accent-color);
+        }
+        
+        .shortcut-list {
+            text-align: left;
+        }
+        
+        .shortcut-item {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .shortcut-key {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .close-shortcut {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .close-shortcut:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Floating animation for particles */
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         @keyframes sway {
@@ -322,10 +718,88 @@
             }
         }
         
+        @keyframes blinkOpacity {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        /* Style untuk modal audio permission */
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+        
+        .audio-permission-alert {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease forwards;
+            max-width: 90%;
+        }
+        
+        .audio-permission-alert.hide {
+            animation: slideDown 0.3s ease forwards;
+        }
+        
+        .audio-permission-btn {
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-permission-btn:hover {
+            background-color: rgba(26, 26, 46, 0.9);
+        }
         /* 
-        * THEME BERDASARKAN MODE
-        * Work mode dan break mode memiliki background berbeda
-        */
+* THEME BERDASARKAN MODE
+* Work mode dan break mode memiliki background berbeda
+*/
+        
         body.work-mode {
             background-image: linear-gradient(to right top, #16213e, #1a1a2e);
         }
@@ -333,20 +807,34 @@
         body.break-mode {
             background-image: linear-gradient(to right top, #1a2a3a, #0f1a23);
         }
-        
         /* 
-        * RESPONSIVE DESIGN
-        * Penyesuaian untuk mobile devices
-        */
+* RESPONSIVE DESIGN
+* Penyesuaian untuk mobile devices
+*/
+        
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 4rem;
+            }
+            .timer.long-duration {
+                font-size: 3rem;
+            }
+            .circular-progress {
+                width: 180px;
+                height: 180px;
+            }
+            .timer-inside-circle {
+                font-size: 2.2rem;
+            }
+        }
+        
         @media (max-width: 480px) {
             .timer {
                 font-size: 3rem;
             }
-            
             .timer.long-duration {
                 font-size: 2.2rem;
             }
-            
             .controls {
                 flex-direction: column;
                 align-items: center;
@@ -354,11 +842,60 @@
             .btn {
                 width: 100%;
             }
+            .circular-progress {
+                width: 150px;
+                height: 150px;
+            }
+            .timer-inside-circle {
+                font-size: 1.8rem;
+            }
+        }
+        /* Laptop/Desktop specific adjustments */
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 600px;
+                padding: 2.5rem;
+            }
+            h1 {
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
+            }
+            .timer {
+                font-size: 6rem;
+            }
+            .circular-progress {
+                width: 250px;
+                height: 250px;
+            }
+            .timer-inside-circle {
+                font-size: 3rem;
+            }
+            .btn {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 
 <body class="work-mode">
+    <div class="particles" id="particles"></div>
+
+    <div class="top-right-content">
+        <div class="session-counter" id="session-counter">
+            <span id="pomodoro-count">0</span> sessions
+        </div>
+
+        <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
+          <i class="far fa-circle-question"></i>
+        </button>
+
+        <button class="fullscreen-btn" id="fullscreen-btn">
+          <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
     <div class="container">
         <h1>Break Time</h1>
 
@@ -368,8 +905,17 @@
             <button class="mode-btn" id="long-break-btn">Long Break</button>
         </div>
 
-        <div class="timer-container">
-            <div class="timer" id="timer">25:00</div>
+        <div class="circular-progress">
+            <svg class="progress-circle" viewBox="0 0 200 200">
+          <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
+          <circle
+            class="progress-circle-fill"
+            cx="100"
+            cy="100"
+            r="90"
+          ></circle>
+        </svg>
+            <div class="timer-inside-circle" id="timer">25:00</div>
         </div>
 
         <div class="controls">
@@ -378,21 +924,56 @@
         </div>
 
         <div class="settings">
-            <button class="settings-btn" id="settings-btn">⚙️</button>
-            <div class="settings-panel" id="settings-panel">
-                <div class="form-group">
-                    <label for="pomodoro-time">Work Time (minutes)</label>
-                    <input type="number" id="pomodoro-time" min="1" max="240" value="25">
+            <button class="settings-btn" id="settings-btn">
+          <i class="fas fa-cog"></i>
+        </button>
+        </div>
+    </div>
+
+    <!-- Shortcut Guide Modal -->
+    <div class="shortcut-modal" id="shortcut-modal">
+        <div class="shortcut-modal-content">
+            <div class="shortcut-modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button class="close-shortcut" id="close-shortcut">×</button>
+            </div>
+            <div class="shortcut-list">
+                <div class="shortcut-item">
+                    <span>Start/Pause Timer</span>
+                    <span class="shortcut-key">Space</span>
                 </div>
-                <div class="form-group">
-                    <label for="short-break-time">Short Break (minutes)</label>
-                    <input type="number" id="short-break-time" min="1" max="30" value="5">
+                <div class="shortcut-item">
+                    <span>Reset Timer</span>
+                    <span class="shortcut-key">R</span>
                 </div>
-                <div class="form-group">
-                    <label for="long-break-time">Long Break (minutes)</label>
-                    <input type="number" id="long-break-time" min="1" max="120" value="15">
+                <div class="shortcut-item">
+                    <span>Work Mode</span>
+                    <span class="shortcut-key">W</span>
                 </div>
-                <button class="save-btn" id="save-settings-btn">Save Settings</button>
+                <div class="shortcut-item">
+                    <span>Short Break</span>
+                    <span class="shortcut-key">S</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Long Break</span>
+                    <span class="shortcut-key">L</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Open Guide</span>
+                    <span class="shortcut-key">G</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Open Settings</span>
+                    <span class="shortcut-key">O</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Toggle Fullscreen</span>
+                    <span class="shortcut-key">F</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Close Popup</span>
+                    <span class="shortcut-key">Esc</span>
+                </div>
             </div>
         </div>
     </div>
@@ -401,42 +982,129 @@
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal">
             <div class="coffee-icon">☕</div>
-            <h2>Ngopi Dulu Bro!</h2>
+            <h2 id="modal-title">Time's Up!</h2>
             <p id="random-quote">"Take a break to sharpen your axe."</p>
-            <button class="modal-btn" id="modal-btn">Lanjut!</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="modal-progress"></div>
+            </div>
+            <button class="btn btn-primary" id="modal-btn">Continue</button>
         </div>
     </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-modal-content">
+            <div class="settings-modal-header">
+                <h2>Timer Settings</h2>
+                <button class="close-settings" id="close-settings">×</button>
+            </div>
+            <div class="form-group">
+                <label for="pomodoro-time">Work Time (minutes)</label>
+                <input type="number" id="pomodoro-time" min="1" max="240" value="25" />
+            </div>
+            <div class="form-group">
+                <label for="short-break-time">Short Break (minutes)</label>
+                <input type="number" id="short-break-time" min="1" max="30" value="5" />
+            </div>
+            <div class="form-group">
+                <label for="long-break-time">Long Break (minutes)</label>
+                <input type="number" id="long-break-time" min="1" max="120" value="15" />
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+            <span>Sound Notifications</span>
+            <label class="switch">
+              <input type="checkbox" id="sound-toggle" checked />
+              <span class="slider"></span>
+            </label>
+                </label>
+            </div>
+
+            <div class="toggle-group">
+                <label class="toggle-label">
+            <span>Auto-start next timer</span>
+            <label class="switch">
+              <input type="checkbox" id="auto-start" />
+              <span class="slider"></span>
+            </label>
+                </label>
+            </div>
+
+            <button class="delete-session-btn" id="delete-session-btn">
+          Reset Session Count
+        </button>
+
+            <button class="save-btn" id="save-settings-btn">Save Settings</button>
+        </div>
+    </div>
+
+    <audio id="alarm-sound" preload="auto">
+      <source
+        src="sound.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="tick-sound" preload="auto">
+      <source
+        src="sound.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
 
     <script>
         // =============================================
         // INISIALISASI ELEMEN DOM
         // =============================================
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('start-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const pomodoroBtn = document.getElementById('pomodoro-btn');
-        const shortBreakBtn = document.getElementById('short-break-btn');
-        const longBreakBtn = document.getElementById('long-break-btn');
-        const settingsBtn = document.getElementById('settings-btn');
-        const settingsPanel = document.getElementById('settings-panel');
-        const saveSettingsBtn = document.getElementById('save-settings-btn');
-        const pomodoroTimeInput = document.getElementById('pomodoro-time');
-        const shortBreakTimeInput = document.getElementById('short-break-time');
-        const longBreakTimeInput = document.getElementById('long-break-time');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalBtn = document.getElementById('modal-btn');
-        const randomQuoteElement = document.getElementById('random-quote');
+        const timerDisplay = document.getElementById("timer");
+        const startBtn = document.getElementById("start-btn");
+        const resetBtn = document.getElementById("reset-btn");
+        const pomodoroBtn = document.getElementById("pomodoro-btn");
+        const shortBreakBtn = document.getElementById("short-break-btn");
+        const longBreakBtn = document.getElementById("long-break-btn");
+        const settingsBtn = document.getElementById("settings-btn");
+        const modalOverlay = document.getElementById("modal-overlay");
+        const modalBtn = document.getElementById("modal-btn");
+        const modalTitle = document.getElementById("modal-title");
+        const randomQuoteElement = document.getElementById("random-quote");
+        const modalProgress = document.getElementById("modal-progress");
+        const soundToggle = document.getElementById("sound-toggle");
+        const autoStartToggle = document.getElementById("auto-start");
+        const fullscreenBtn = document.getElementById("fullscreen-btn");
+        const alarmSound = document.getElementById("alarm-sound");
+        const tickSound = document.getElementById("tick-sound");
         const body = document.body;
-
+        const pomodoroCountElement = document.getElementById("pomodoro-count");
+        const sessionCounter = document.getElementById("session-counter");
+        const progressCircleFill = document.querySelector(
+            ".progress-circle-fill"
+        );
+        const settingsModal = document.getElementById("settings-modal");
+        const closeSettingsBtn = document.getElementById("close-settings");
+        const saveSettingsBtn = document.getElementById("save-settings-btn");
+        const deleteSessionBtn = document.getElementById("delete-session-btn");
+        const pomodoroTimeInput = document.getElementById("pomodoro-time");
+        const shortBreakTimeInput = document.getElementById("short-break-time");
+        const longBreakTimeInput = document.getElementById("long-break-time");
+        const particlesContainer = document.getElementById("particles");
+        const shortcutBtn = document.getElementById("shortcut-btn");
+        const shortcutModal = document.getElementById("shortcut-modal");
+        const closeShortcutBtn = document.getElementById("close-shortcut");
+    
         // =============================================
         // VARIABEL UTAMA TIMER
         // =============================================
         let timer;
         let timeLeft = 25 * 60; // 25 menit dalam detik
         let isRunning = false;
-        let currentMode = 'pomodoro'; // 'pomodoro', 'shortBreak', 'longBreak'
+        let currentMode = "pomodoro"; // 'pomodoro', 'shortBreak', 'longBreak'
         let pomodoroCount = 0; // Menghitung berapa kali pomodoro selesai
-
+        let totalSeconds = timeLeft;
+        let isSoundEnabled = true;
+        let isAutoStartEnabled = false;
+        let lastTickTime = 0;
+        let alarmInterval; // Untuk mengontrol alarm yang berulang
+    
         // =============================================
         // DATABASE QUOTE UNTUK BREAK TIME
         // =============================================
@@ -455,76 +1123,287 @@
             "Kerja keras itu penting, tapi beristirahat juga penting.",
             "Kamu tidak bisa menuangkan dari cangkir kosong. Jaga dirimu dulu.",
             "Kesuksesan adalah mendapatkan apa yang kamu inginkan. Kebahagiaan adalah menginginkan apa yang kamu dapatkan.",
-            "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu."
+            "Kuncinya bukan memprioritaskan apa yang ada di jadwalmu, tapi menjadwalkan prioritasmu.",
         ];
-
+    
         // =============================================
         // PENGATURAN DEFAULT
         // =============================================
         let settings = {
             pomodoroTime: 25,
             shortBreakTime: 5,
-            longBreakTime: 15
+            longBreakTime: 15,
+            soundEnabled: true,
+            autoStart: false,
         };
-
+    
         // =============================================
         // FUNGSI INISIALISASI APLIKASI
         // =============================================
         function init() {
             loadSettings();
             updateTimerDisplay();
+            updateProgressCircle();
             setupEventListeners();
+            updatePomodoroCount();
+            createParticles();
+
+            initAudio();
+    
+            // Tambahkan event listener untuk interaksi pertama
+            document.body.addEventListener('click', handleFirstInteraction, { once: true });
+            document.body.addEventListener('touchstart', handleFirstInteraction, { once: true });
+        }
+    
+        function handleFirstInteraction() {
+            console.log("First interaction detected");
+            // Coba load semua audio
+            alarmSound.load();
+            tickSound.load();
+            
+            // Coba mainkan audio kosong untuk memastikan izin
+            try {
+                const playPromise = alarmSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        alarmSound.pause();
+                        alarmSound.currentTime = 0;
+                    }).catch(e => {
+                        console.log("Autoplay prevented, showing alert");
+                        showAudioPermissionAlert();
+                    });
+                }
+            } catch (e) {
+                console.error("Audio play failed:", e);
+                showAudioPermissionAlert();
+            }
+            
+            // Set volume default
+            alarmSound.volume = 1.0;
+            tickSound.volume = 0.3;
+        }
+    
+        // =============================================
+        // FUNGSI MEMBUAT PARTIKEL BACKGROUND
+        // =============================================
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement("div");
+                particle.classList.add("particle");
+    
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+    
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-${size}px`;
+    
+                // Random animation duration between 10s and 20s
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+    
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+    
+                particlesContainer.appendChild(particle);
+            }
         }
 
+        // =============================================
+        // FUNGSI INIT AUDIO
+        // =============================================
+        function initAudio() {
+            // Buat audio context
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioContext = new AudioContext();
+                
+                // Coba resume context saat interaksi pertama
+                document.body.addEventListener('click', () => {
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                }, { once: true });
+                
+                // Coba mainkan audio kosong untuk meminta izin
+                const oscillator = audioContext.createOscillator();
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio initialization error:", e);
+            }
+            
+            // Preload sounds
+            alarmSound.load();
+            tickSound.load();
+            
+            // Set volume default
+            alarmSound.volume = 1.0;
+            tickSound.volume = 0.7;
+        }
+    
         // =============================================
         // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
         // =============================================
         function loadSettings() {
-            const savedSettings = localStorage.getItem('pomodoroSettings');
+            const savedSettings = localStorage.getItem("pomodoroSettings");
             if (savedSettings) {
                 settings = JSON.parse(savedSettings);
                 pomodoroTimeInput.value = settings.pomodoroTime;
                 shortBreakTimeInput.value = settings.shortBreakTime;
                 longBreakTimeInput.value = settings.longBreakTime;
+                soundToggle.checked = settings.soundEnabled !== false; // Default true
+                autoStartToggle.checked = settings.autoStart;
+                isSoundEnabled = settings.soundEnabled !== false; // Default true
+                isAutoStartEnabled = settings.autoStart;
+            } else {
+                // Default settings jika tidak ada yang tersimpan
+                soundToggle.checked = true;
+            }
+    
+            // Load session count
+            const savedCount = localStorage.getItem("pomodoroCount");
+            const lastDate = localStorage.getItem("lastPomodoroDate");
+            const today = new Date().toDateString();
+    
+            if (savedCount && lastDate === today) {
+                pomodoroCount = parseInt(savedCount);
+            } else {
+                pomodoroCount = 0;
             }
         }
-
+    
         // =============================================
         // FUNGSI SAVE SETTINGS KE LOCALSTORAGE
         // =============================================
         function saveSettings() {
             // Validasi input tidak boleh kosong
-            if (!pomodoroTimeInput.value || !shortBreakTimeInput.value || !longBreakTimeInput.value) {
-                showAlert('Harap isi semua field pengaturan!');
+            if (!pomodoroTimeInput.value ||
+                !shortBreakTimeInput.value ||
+                !longBreakTimeInput.value
+            ) {
+                showAlert("Harap isi semua field pengaturan!");
                 return;
             }
-
+    
             settings = {
                 pomodoroTime: parseInt(pomodoroTimeInput.value),
                 shortBreakTime: parseInt(shortBreakTimeInput.value),
-                longBreakTime: parseInt(longBreakTimeInput.value)
+                longBreakTime: parseInt(longBreakTimeInput.value),
+                soundEnabled: soundToggle.checked,
+                autoStart: autoStartToggle.checked,
             };
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+    
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
+            isSoundEnabled = settings.soundEnabled;
+            isAutoStartEnabled = settings.autoStart;
+    
             switchMode(currentMode); // Update timer dengan pengaturan baru
-            
+            closeSettings();
+    
             // Tampilkan notifikasi sukses
-            showAlert('Pengaturan berhasil disimpan!', 'success');
+            showAlert("Pengaturan berhasil disimpan!", "success");
         }
-
+    
+        // =============================================
+        // FUNGSI RESET SESSION COUNT
+        // =============================================
+        function resetSessionCount() {
+            pomodoroCount = 0;
+            updatePomodoroCount();
+            showAlert("Session count has been reset!", "success");
+        }
+    
         // =============================================
         // FUNGSI SETUP EVENT LISTENERS
         // =============================================
         function setupEventListeners() {
-            startBtn.addEventListener('click', toggleTimer);
-            resetBtn.addEventListener('click', resetTimer);
-            pomodoroBtn.addEventListener('click', () => switchMode('pomodoro'));
-            shortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
-            longBreakBtn.addEventListener('click', () => switchMode('longBreak'));
-            settingsBtn.addEventListener('click', toggleSettings);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            modalBtn.addEventListener('click', closeModal);
+            startBtn.addEventListener("click", toggleTimer);
+            resetBtn.addEventListener("click", resetTimer);
+            pomodoroBtn.addEventListener("click", () => switchMode("pomodoro"));
+            shortBreakBtn.addEventListener("click", () => switchMode("shortBreak"));
+            longBreakBtn.addEventListener("click", () => switchMode("longBreak"));
+            settingsBtn.addEventListener("click", openSettings);
+            saveSettingsBtn.addEventListener("click", saveSettings);
+            deleteSessionBtn.addEventListener("click", resetSessionCount);
+            modalBtn.addEventListener("click", closeModal);
+            soundToggle.addEventListener("change", toggleSound);
+            fullscreenBtn.addEventListener("click", toggleFullscreen);
+            closeSettingsBtn.addEventListener("click", closeSettings);
+            shortcutBtn.addEventListener("click", openShortcutGuide);
+            closeShortcutBtn.addEventListener("click", closeShortcutGuide);
+    
+            // Keyboard shortcuts
+            document.addEventListener("keydown", (e) => {
+                if (e.code === "Space") {
+                    e.preventDefault();
+                    toggleTimer();
+                }
+                if (e.code === "KeyO") {
+                    openSettings();
+                }
+                if (e.code === "KeyF") {
+                    toggleFullscreen();
+                }
+                if (e.code === "KeyG") {
+                    openShortcutGuide();
+                }
+                if (e.code === "KeyR") {
+                    resetTimer();
+                }
+                if (e.code === "KeyW") {
+                    switchMode("pomodoro");
+                }
+                if (e.code === "KeyS") {
+                    switchMode("shortBreak");
+                }
+                if (e.code === "KeyL") {
+                    switchMode("longBreak");
+                }
+                if (e.code === "Escape") {
+                    if (settingsModal.classList.contains("show")) {
+                        closeSettings();
+                    }
+                    if (shortcutModal.classList.contains("show")) {
+                        closeShortcutGuide();
+                    }
+                    if (modalOverlay.classList.contains("show")) {
+                        closeModal();
+                    }
+                }
+            });
         }
-
+    
+        // =============================================
+        // FUNGSI TOGGLE FULLSCREEN
+        // =============================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.error(
+                        `Error attempting to enable fullscreen: ${err.message}`
+                    );
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    
+        // =============================================
+        // FUNGSI TOGGLE SOUND
+        // =============================================
+        function toggleSound() {
+            isSoundEnabled = soundToggle.checked;
+            settings.soundEnabled = isSoundEnabled;
+            localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
+        }
+        
         // =============================================
         // FUNGSI FORMAT WAKTU (HANDLE JAM DAN MENIT)
         // =============================================
@@ -532,14 +1411,39 @@
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const remainingSeconds = seconds % 60;
-            
+    
             if (hours > 0) {
-                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                return `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
             } else {
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+            .toString()
+            .padStart(2, "0")}`;
             }
         }
-
+    
+        // =============================================
+        // FUNGSI UPDATE PROGRESS CIRCLE
+        // =============================================
+        function updateProgressCircle() {
+            const progress = ((totalSeconds - timeLeft) / totalSeconds) * 565.48;
+            progressCircleFill.style.strokeDashoffset = 565.48 - progress;
+            modalProgress.style.width = `${(progress / 565.48) * 100}%`;
+        }
+    
+        // =============================================
+        // FUNGSI UPDATE POMODORO COUNT
+        // =============================================
+        function updatePomodoroCount() {
+            pomodoroCountElement.textContent = pomodoroCount;
+    
+            // Simpan count ke localStorage
+            const today = new Date().toDateString();
+            localStorage.setItem("pomodoroCount", pomodoroCount);
+            localStorage.setItem("lastPomodoroDate", today);
+        }
+    
         // =============================================
         // FUNGSI TOGGLE TIMER (START/PAUSE)
         // =============================================
@@ -550,20 +1454,39 @@
                 startTimer();
             }
         }
-
+    
         // =============================================
         // FUNGSI START TIMER
         // =============================================
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
-                startBtn.textContent = 'Pause';
+                startBtn.textContent = "Pause";
                 resetBtn.disabled = false;
-
+    
                 timer = setInterval(() => {
                     timeLeft--;
                     updateTimerDisplay();
-
+                    updateProgressCircle();
+    
+                    // Play tick sound every second (but not too loud)
+                    const now = Date.now();
+                    if (
+                        isSoundEnabled &&
+                        now - lastTickTime > 900 &&
+                        timeLeft > 0 &&
+                        timeLeft <= 10
+                    ) {
+                        try {
+                            tickSound.currentTime = 0;
+                            tickSound.volume = 0.7; // Naikkan volume untuk mobile
+                            tickSound.play();
+                            lastTickTime = now;
+                        } catch (e) {
+                            console.error("Tick sound failed:", e);
+                        }
+                    }
+    
                     if (timeLeft <= 0) {
                         clearInterval(timer);
                         timerComplete();
@@ -571,7 +1494,7 @@
                 }, 1000);
             }
         }
-
+    
         // =============================================
         // FUNGSI PAUSE TIMER
         // =============================================
@@ -579,190 +1502,318 @@
             if (isRunning) {
                 clearInterval(timer);
                 isRunning = false;
-                startBtn.textContent = 'Resume';
+                startBtn.textContent = "Resume";
             }
         }
-
+    
         // =============================================
         // FUNGSI RESET TIMER
         // =============================================
         function resetTimer() {
             clearInterval(timer);
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
-            switchMode(currentMode); // Reset ke waktu awal mode saat ini
+            timerDisplay.style.animation = "none";
+            switchMode(currentMode);
         }
-
+    
         // =============================================
         // FUNGSI SWITCH MODE (WORK/SHORT BREAK/LONG BREAK)
         // =============================================
         function switchMode(mode) {
             currentMode = mode;
-
+    
             // Update tombol aktif
-            pomodoroBtn.classList.remove('active');
-            shortBreakBtn.classList.remove('active');
-            longBreakBtn.classList.remove('active');
-
+            pomodoroBtn.classList.remove("active");
+            shortBreakBtn.classList.remove("active");
+            longBreakBtn.classList.remove("active");
+    
             // Set waktu berdasarkan mode
             switch (mode) {
-                case 'pomodoro':
+                case "pomodoro":
                     timeLeft = settings.pomodoroTime * 60;
-                    pomodoroBtn.classList.add('active');
-                    body.className = 'work-mode';
+                    pomodoroBtn.classList.add("active");
+                    body.className = "work-mode";
                     break;
-                case 'shortBreak':
+                case "shortBreak":
                     timeLeft = settings.shortBreakTime * 60;
-                    shortBreakBtn.classList.add('active');
-                    body.className = 'break-mode';
+                    shortBreakBtn.classList.add("active");
+                    body.className = "break-mode";
                     break;
-                case 'longBreak':
+                case "longBreak":
                     timeLeft = settings.longBreakTime * 60;
-                    longBreakBtn.classList.add('active');
-                    body.className = 'break-mode';
+                    longBreakBtn.classList.add("active");
+                    body.className = "break-mode";
                     break;
             }
-
+    
+            totalSeconds = timeLeft;
+    
             // Update class untuk timer panjang
             if (timeLeft >= 3600) {
-                timerDisplay.classList.add('long-duration');
+                timerDisplay.classList.add("long-duration");
             } else {
-                timerDisplay.classList.remove('long-duration');
+                timerDisplay.classList.remove("long-duration");
             }
-
+    
+            timerDisplay.style.animation = "none";
             updateTimerDisplay();
-
+            updateProgressCircle();
+    
             // Reset state timer
             clearInterval(timer);
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
+    
+            // Auto-start jika setting diaktifkan
+            if (isAutoStartEnabled) {
+                startTimer();
+            }
         }
-
+    
         // =============================================
         // FUNGSI KETIKA TIMER SELESAI
         // =============================================
         function timerComplete() {
             isRunning = false;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = "Start";
             resetBtn.disabled = true;
-
-            // Mainkan suara alarm (acak dari beberapa pilihan)
-            playRandomAlarmSound();
-
+    
+            // Hentikan alarm dan getaran yang mungkin sedang berjalan
+            stopAlarm();
+    
+            // Mulai alarm dan getaran
+            startAlarm();
+    
             // Tampilkan modal dengan quote acak
             showModal();
-
-            // Update pomodoro count
-            if (currentMode === 'pomodoro') {
+    
+            // Update pomodoro count jika mode work
+            if (currentMode === "pomodoro") {
                 pomodoroCount++;
+                updatePomodoroCount();
+            }
+    
+            // Notifikasi desktop jika didukung
+            if ("Notification" in window && Notification.permission === "granted") {
+                const notification = new Notification("Timer Complete!", {
+                    body: currentMode === "pomodoro" ?
+                        "Time for a break!" : "Time to get back to work!",
+                    icon: "https://cdn-icons-png.flaticon.com/512/2913/2913103.png",
+                });
             }
         }
-
+    
+        // Fungsi untuk memulai alarm dan getaran
+        function startAlarm() {
+            // Mainkan suara alarm
+            if (isSoundEnabled) {
+                try {
+                    // Set loop untuk alarm sound
+                    alarmSound.loop = true;
+                    alarmSound.currentTime = 0;
+                    alarmSound.volume = 1.0;
+                    const playPromise = alarmSound.play();
+    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Tampilkan tombol untuk memutar suara manual
+                            showAudioPermissionAlert();
+                        });
+                    }
+    
+                    // Set interval untuk memastikan alarm tetap berbunyi
+                    alarmInterval = setInterval(() => {
+                        if (alarmSound.paused) {
+                            alarmSound.currentTime = 0;
+                            alarmSound.play().catch(e => console.log("Alarm play failed:", e));
+                        }
+                    }, 1000);
+                } catch (e) {
+                    console.error("Audio play failed:", e);
+                    showAudioPermissionAlert();
+                }
+            }
+        }
+    
+        // Fungsi untuk menghentikan alarm dan getaran
+        function stopAlarm() {
+            // Hentikan alarm sound
+            if (alarmSound) {
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+                alarmSound.loop = false;
+            }
+    
+            // Hentikan interval alarm
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+        }
+    
+        function showAudioPermissionAlert() {
+            const alert = document.createElement("div");
+            alert.innerHTML = `
+                <div style="position: fixed; bottom: 20px; left: 20px; right: 20px; 
+                            background: #333; color: white; padding: 15px; 
+                            border-radius: 8px; z-index: 1000; text-align: center;">
+                    <p>Tap here to enable sound notifications</p>
+                    <button style="background: #4CAF50; border: none; color: white; 
+                                padding: 8px 16px; margin-top: 8px; border-radius: 4px;">
+                        Enable Sound
+                    </button>
+                </div>
+            `;
+    
+            const button = alert.querySelector("button");
+            button.addEventListener("click", () => {
+                // Coba mainkan suara setelah interaksi pengguna
+                alarmSound.currentTime = 0;
+                alarmSound.play().catch(e => console.error("Still can't play:", e));
+                document.body.removeChild(alert);
+            });
+    
+            document.body.appendChild(alert);
+    
+            // Hapus otomatis setelah 10 detik
+            setTimeout(() => {
+                if (document.body.contains(alert)) {
+                    document.body.removeChild(alert);
+                }
+            }, 10000);
+        }
+    
         // =============================================
         // FUNGSI TAMPILKAN MODAL BREAK TIME
         // =============================================
         function showModal() {
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             randomQuoteElement.textContent = `"${randomQuote}"`;
-            modalOverlay.classList.add('show');
+    
+            // Set judul modal berdasarkan mode
+            if (currentMode === "pomodoro") {
+                modalTitle.textContent = "Time for a Break!";
+            } else {
+                modalTitle.textContent = "Back to Work!";
+            }
+    
+            modalOverlay.classList.add("show");
+    
+            // Request notification permission jika belum
+            if ("Notification" in window && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
         }
-
+    
         // =============================================
         // FUNGSI TUTUP MODAL
         // =============================================
         function closeModal() {
-            modalOverlay.classList.remove('show');
-
+            // Hentikan alarm dan getaran sebelum menutup modal
+            stopAlarm();
+    
+            modalOverlay.classList.remove("show");
+    
             // Tentukan mode berikutnya setelah tutup modal
-            if (currentMode === 'pomodoro') {
+            if (currentMode === "pomodoro") {
                 if (pomodoroCount % 4 === 0) {
-                    switchMode('longBreak');
+                    switchMode("longBreak");
                 } else {
-                    switchMode('shortBreak');
+                    switchMode("shortBreak");
                 }
             } else {
-                switchMode('pomodoro');
+                switchMode("pomodoro");
             }
         }
-
+    
         // =============================================
         // FUNGSI UPDATE TAMPILAN TIMER
         // =============================================
         function updateTimerDisplay() {
             timerDisplay.textContent = formatTime(timeLeft);
-            
-            // Sesuaikan ukuran font berdasarkan panjang teks
-            if (timeLeft >= 3600) { // Jika lebih dari 1 jam
-                timerDisplay.style.fontSize = '3.5rem';
+    
+            // Animasi kedip saat waktu hampir habis
+            if (timeLeft <= 10 && timeLeft > 0) {
+                timerDisplay.style.animation = "blinkOpacity 1s infinite";
             } else {
-                timerDisplay.style.fontSize = '5rem';
+                timerDisplay.style.animation = "none";
             }
         }
-
+    
         // =============================================
-        // FUNGSI TOGGLE SETTINGS PANEL
+        // FUNGSI BUKA SETTINGS MODAL
         // =============================================
-        function toggleSettings() {
-            settingsPanel.classList.toggle('show');
+        function openSettings() {
+            settingsModal.classList.add("show");
         }
-
+    
         // =============================================
-        // FUNGSI MAINKAN SUARA ALARM (RANDOM)
+        // FUNGSI TUTUP SETTINGS MODAL
         // =============================================
-        function playRandomAlarmSound() {
-            // Beberapa pilihan suara alarm
-            const alarmSounds = [
-                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-996.mp3',
-                'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3'
-            ];
-            
-            // Pilih suara secara acak
-            const randomSound = alarmSounds[Math.floor(Math.random() * alarmSounds.length)];
-            const audio = new Audio(randomSound);
-            audio.play();
+        function closeSettings() {
+            settingsModal.classList.remove("show");
         }
-
+    
+        // Fungsi untuk membuka shortcut guide
+        function openShortcutGuide() {
+            shortcutModal.classList.add("show");
+        }
+    
+        // Fungsi untuk menutup shortcut guide
+        function closeShortcutGuide() {
+            shortcutModal.classList.remove("show");
+        }
+    
+        // Fungsi untuk menangani perubahan fullscreen
+        document.addEventListener("fullscreenchange", () => {
+            const fullscreenIcon = document.querySelector("#fullscreen-btn i");
+            if (document.fullscreenElement) {
+                fullscreenIcon.classList.replace("fa-expand", "fa-compress");
+            } else {
+                fullscreenIcon.classList.replace("fa-compress", "fa-expand");
+            }
+        });
+    
         // =============================================
         // FUNGSI TAMPILKAN ALERT (SWEETALERT STYLE)
         // =============================================
-        function showAlert(message, type = 'error') {
+        function showAlert(message, type = "error") {
             // Buat elemen alert
-            const alert = document.createElement('div');
-            alert.style.position = 'fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.padding = '15px 25px';
-            alert.style.borderRadius = '5px';
-            alert.style.color = 'white';
-            alert.style.fontWeight = '600';
-            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-            alert.style.zIndex = '1000';
-            alert.style.animation = 'fadeIn 0.3s ease';
+            const alert = document.createElement("div");
+            alert.style.position = "fixed";
+            alert.style.top = "20px";
+            alert.style.right = "20px";
+            alert.style.padding = "15px 25px";
+            alert.style.borderRadius = "5px";
+            alert.style.color = "white";
+            alert.style.fontWeight = "600";
+            alert.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+            alert.style.zIndex = "1000";
+            alert.style.animation = "fadeIn 0.3s ease";
             alert.textContent = message;
-            
+    
             // Set warna berdasarkan type
-            if (type === 'success') {
-                alert.style.backgroundColor = '#4BB543'; // Hijau
+            if (type === "success") {
+                alert.style.backgroundColor = "#4BB543"; // Hijau
             } else {
-                alert.style.backgroundColor = '#FF3333'; // Merah
+                alert.style.backgroundColor = "#FF3333"; // Merah
             }
-            
+    
             // Tambahkan ke body
             document.body.appendChild(alert);
-            
+    
             // Hilangkan setelah 3 detik
             setTimeout(() => {
-                alert.style.animation = 'fadeOut 0.3s ease';
+                alert.style.animation = "fadeOut 0.3s ease";
                 setTimeout(() => {
                     document.body.removeChild(alert);
                 }, 300);
             }, 3000);
         }
-
+    
         // =============================================
         // INISIALISASI APLIKASI
         // =============================================

@@ -1507,7 +1507,9 @@
               try {
                 tickSound.currentTime = 0;
                 tickSound.volume = 0.3; // Volume lebih rendah untuk tick sound
-                tickSound.play().catch(e => console.log("Tick sound play failed:", e));
+                tickSound
+                  .play()
+                  .catch((e) => console.log("Tick sound play failed:", e));
                 lastTickTime = now;
               } catch (e) {
                 console.error("Tick sound failed:", e);
@@ -1618,17 +1620,32 @@
         startBtn.textContent = "Start";
         resetBtn.disabled = true;
 
-        // Hentikan alarm dan getaran yang mungkin sedang berjalan
-        stopAlarm();
-
-        // Hentikan tick sound
+        // Hentikan tick sound terlebih dahulu
         tickSound.pause();
         tickSound.currentTime = 0;
 
-        // Mulai alarm dan getaran
-        startAlarm();
+        // Mainkan alarm sound (tanpa looping)
+        if (isSoundEnabled) {
+          isAlarmPlaying = true;
+          try {
+            // Hapus loop dan mainkan sekali saja
+            alarmSound.loop = false;
+            alarmSound.currentTime = 0;
+            alarmSound
+              .play()
+              .catch((e) => console.log("Alarm play failed:", e));
 
-        // Tampilkan modal dengan quote acak
+            // Set timeout untuk menghentikan alarm setelah 10 detik
+            setTimeout(() => {
+              stopAlarm();
+            }, 10000); // 10 detik
+          } catch (e) {
+            console.error("Audio play failed:", e);
+            showAudioPermissionAlert();
+          }
+        }
+
+        // Tampilkan modal
         showModal();
 
         // Update pomodoro count jika mode work
@@ -1686,15 +1703,11 @@
 
       // Fungsi untuk menghentikan alarm dan getaran
       function stopAlarm() {
-        // Hentikan alarm sound
         if (alarmSound) {
           alarmSound.pause();
           alarmSound.currentTime = 0;
-          alarmSound.loop = false;
-          isAlarmPlaying = false; // Reset status alarm
+          isAlarmPlaying = false;
         }
-
-        // Hentikan interval alarm
         if (alarmInterval) {
           clearInterval(alarmInterval);
           alarmInterval = null;
@@ -1759,12 +1772,12 @@
       // FUNGSI TUTUP MODAL
       // =============================================
       function closeModal() {
-        // Hentikan alarm dan getaran sebelum menutup modal
+        // Pastikan alarm dihentikan
         stopAlarm();
 
         modalOverlay.classList.remove("show");
 
-        // Tentukan mode berikutnya setelah tutup modal
+        // Tentukan mode berikutnya
         if (currentMode === "pomodoro") {
           if (pomodoroCount % 4 === 0) {
             switchMode("longBreak");

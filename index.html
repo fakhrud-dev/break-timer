@@ -1268,7 +1268,7 @@
 
         // Set volume default
         alarmSound.volume = 1.0;
-        tickSound.volume = 0.7;
+        tickSound.volume = 0.3;
       }
 
       // =============================================
@@ -1507,7 +1507,7 @@
               try {
                 tickSound.currentTime = 0;
                 tickSound.volume = 0.3; // Volume lebih rendah untuk tick sound
-                tickSound.play();
+                tickSound.play().catch(e => console.log("Tick sound play failed:", e));
                 lastTickTime = now;
               } catch (e) {
                 console.error("Tick sound failed:", e);
@@ -1530,6 +1530,7 @@
           clearInterval(timer);
           isRunning = false;
           startBtn.textContent = "Resume";
+          // Hentikan semua suara saat pause
           tickSound.pause();
           tickSound.currentTime = 0;
         }
@@ -1545,6 +1546,7 @@
         resetBtn.disabled = true;
         timerDisplay.style.animation = "none";
         switchMode(currentMode);
+        // Hentikan semua suara saat reset
         tickSound.pause();
         tickSound.currentTime = 0;
       }
@@ -1598,6 +1600,10 @@
         startBtn.textContent = "Start";
         resetBtn.disabled = true;
 
+        // Hentikan semua suara saat ganti mode
+        tickSound.pause();
+        tickSound.currentTime = 0;
+
         // Auto-start jika setting diaktifkan
         if (isAutoStartEnabled) {
           startTimer();
@@ -1614,6 +1620,10 @@
 
         // Hentikan alarm dan getaran yang mungkin sedang berjalan
         stopAlarm();
+
+        // Hentikan tick sound
+        tickSound.pause();
+        tickSound.currentTime = 0;
 
         // Mulai alarm dan getaran
         startAlarm();

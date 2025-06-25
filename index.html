@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Break Time</title>
     <link
+      rel="shortcut icon"
+      href="https://png.pngtree.com/png-vector/20230817/ourmid/pngtree-an-illustration-of-an-ice-cracked-clock-clipart-vector-png-image_7019792.png"
+      type="image/x-icon"
+    />
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
@@ -1118,7 +1123,7 @@
       let isAutoStartEnabled = false;
       let lastTickTime = 0;
       let isAlarmPlaying = false;
-      let alarmInterval; // Untuk mengontrol alarm yang berulang
+      let alarmTimeout; // Untuk mengontrol alarm yang berhenti setelah beberapa detik
 
       // =============================================
       // DATABASE QUOTE UNTUK BREAK TIME
@@ -1163,7 +1168,8 @@
         updatePomodoroCount();
         createParticles();
 
-        initAudio();
+        // Inisialisasi AudioContext untuk memastikan dapat dimainkan
+        initAudioContext();
 
         // Tambahkan event listener untuk interaksi pertama
         document.body.addEventListener("click", handleFirstInteraction, {
@@ -1174,34 +1180,65 @@
         });
       }
 
+      function initAudioContext() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          const audioContext = new AudioContext();
+
+          // Resume context saat interaksi pertama
+          document.body.addEventListener(
+            "click",
+            () => {
+              if (audioContext.state === "suspended") {
+                audioContext.resume();
+              }
+            },
+            { once: true }
+          );
+
+          // Coba mainkan audio kosong untuk meminta izin
+          const oscillator = audioContext.createOscillator();
+          oscillator.connect(audioContext.destination);
+          oscillator.start();
+          oscillator.stop(audioContext.currentTime + 0.01); // Mainkan sangat singkat
+        } catch (e) {
+          console.log("AudioContext initialization error:", e);
+        }
+      }
+
       function handleFirstInteraction() {
-        console.log("First interaction detected");
-        // Coba load semua audio
+        console.log("First interaction detected for audio");
+        // Preload sounds
         alarmSound.load();
         tickSound.load();
-
-        // Coba mainkan audio kosong untuk memastikan izin
-        try {
-          const playPromise = alarmSound.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                alarmSound.pause();
-                alarmSound.currentTime = 0;
-              })
-              .catch((e) => {
-                console.log("Autoplay prevented, showing alert");
-                showAudioPermissionAlert();
-              });
-          }
-        } catch (e) {
-          console.error("Audio play failed:", e);
-          showAudioPermissionAlert();
-        }
 
         // Set volume default
         alarmSound.volume = 1.0;
         tickSound.volume = 0.3;
+
+        // Coba mainkan suara alarm dengan volume 0 untuk mendapatkan izin autoplay
+        try {
+          alarmSound.volume = 0; // Set volume ke 0
+          const playPromise = alarmSound.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                console.log("Audio autoplay allowed.");
+                alarmSound.pause(); // Hentikan segera
+                alarmSound.currentTime = 0;
+                alarmSound.volume = 1.0; // Kembalikan volume normal
+              })
+              .catch((e) => {
+                console.warn("Audio autoplay prevented:", e);
+                // Tampilkan pesan atau tombol jika autoplay tidak diizinkan
+                showAudioPermissionAlert();
+                alarmSound.volume = 1.0; // Kembalikan volume normal
+              });
+          }
+        } catch (e) {
+          console.error("Initial audio play failed:", e);
+          showAudioPermissionAlert();
+        }
       }
 
       // =============================================
@@ -1234,44 +1271,6 @@
       }
 
       // =============================================
-      // FUNGSI INIT AUDIO
-      // =============================================
-      function initAudio() {
-        // Buat audio context
-        try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          const audioContext = new AudioContext();
-
-          // Coba resume context saat interaksi pertama
-          document.body.addEventListener(
-            "click",
-            () => {
-              if (audioContext.state === "suspended") {
-                audioContext.resume();
-              }
-            },
-            { once: true }
-          );
-
-          // Coba mainkan audio kosong untuk meminta izin
-          const oscillator = audioContext.createOscillator();
-          oscillator.connect(audioContext.destination);
-          oscillator.start();
-          oscillator.stop(audioContext.currentTime + 0.1);
-        } catch (e) {
-          console.log("Audio initialization error:", e);
-        }
-
-        // Preload sounds
-        alarmSound.load();
-        tickSound.load();
-
-        // Set volume default
-        alarmSound.volume = 1.0;
-        tickSound.volume = 0.3;
-      }
-
-      // =============================================
       // FUNGSI LOAD SETTINGS DARI LOCALSTORAGE
       // =============================================
       function loadSettings() {
@@ -1288,6 +1287,7 @@
         } else {
           // Default settings jika tidak ada yang tersimpan
           soundToggle.checked = true;
+          isSoundEnabled = true; // Pastikan default sound is enabled
         }
 
         // Load session count
@@ -1358,6 +1358,11 @@
         deleteSessionBtn.addEventListener("click", resetSessionCount);
         modalBtn.addEventListener("click", closeModal);
         soundToggle.addEventListener("change", toggleSound);
+        autoStartToggle.addEventListener("change", () => {
+          isAutoStartEnabled = autoStartToggle.checked;
+          settings.autoStart = isAutoStartEnabled;
+          localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
+        });
         fullscreenBtn.addEventListener("click", toggleFullscreen);
         closeSettingsBtn.addEventListener("click", closeSettings);
         shortcutBtn.addEventListener("click", openShortcutGuide);
@@ -1428,6 +1433,12 @@
         isSoundEnabled = soundToggle.checked;
         settings.soundEnabled = isSoundEnabled;
         localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
+        if (!isSoundEnabled) {
+          // Hentikan suara jika dimatikan saat sedang berjalan
+          stopAlarm();
+          tickSound.pause();
+          tickSound.currentTime = 0;
+        }
       }
 
       // =============================================
@@ -1495,12 +1506,12 @@
             updateTimerDisplay();
             updateProgressCircle();
 
-            // Play tick sound every second (but not too loud)
+            // Play tick sound every second (but not too loud and only when sound is enabled)
             const now = Date.now();
             if (
               isSoundEnabled &&
               !isAlarmPlaying && // Pastikan alarm tidak sedang berbunyi
-              now - lastTickTime > 900 &&
+              now - lastTickTime > 900 && // Hanya mainkan jika sudah 900ms berlalu
               timeLeft > 0 &&
               timeLeft <= 10
             ) {
@@ -1551,6 +1562,7 @@
         // Hentikan semua suara saat reset
         tickSound.pause();
         tickSound.currentTime = 0;
+        stopAlarm(); // Pastikan alarm berhenti jika reset saat berbunyi
       }
 
       // =============================================
@@ -1605,6 +1617,7 @@
         // Hentikan semua suara saat ganti mode
         tickSound.pause();
         tickSound.currentTime = 0;
+        stopAlarm(); // Pastikan alarm berhenti jika ganti mode saat berbunyi
 
         // Auto-start jika setting diaktifkan
         if (isAutoStartEnabled) {
@@ -1624,19 +1637,19 @@
         tickSound.pause();
         tickSound.currentTime = 0;
 
-        // Mainkan alarm sound (tanpa looping)
+        // Mainkan alarm sound
         if (isSoundEnabled) {
           isAlarmPlaying = true;
           try {
-            // Hapus loop dan mainkan sekali saja
-            alarmSound.loop = false;
+            alarmSound.loop = false; // Pastikan tidak looping
             alarmSound.currentTime = 0;
+            alarmSound.volume = 1.0;
             alarmSound
               .play()
               .catch((e) => console.log("Alarm play failed:", e));
 
             // Set timeout untuk menghentikan alarm setelah 10 detik
-            setTimeout(() => {
+            alarmTimeout = setTimeout(() => {
               stopAlarm();
             }, 10000); // 10 detik
           } catch (e) {
@@ -1666,62 +1679,34 @@
         }
       }
 
-      // Fungsi untuk memulai alarm dan getaran
-      function startAlarm() {
-        // Mainkan suara alarm
-        if (isSoundEnabled) {
-          isAlarmPlaying = true; // Set status alarm sedang berbunyi
-          try {
-            // Set loop untuk alarm sound
-            alarmSound.loop = true;
-            alarmSound.currentTime = 0;
-            alarmSound.volume = 1.0;
-            const playPromise = alarmSound.play();
-
-            if (playPromise !== undefined) {
-              playPromise.catch((error) => {
-                // Tampilkan tombol untuk memutar suara manual
-                showAudioPermissionAlert();
-              });
-            }
-
-            // Set interval untuk memastikan alarm tetap berbunyi
-            alarmInterval = setInterval(() => {
-              if (alarmSound.paused) {
-                alarmSound.currentTime = 0;
-                alarmSound
-                  .play()
-                  .catch((e) => console.log("Alarm play failed:", e));
-              }
-            }, 1000);
-          } catch (e) {
-            console.error("Audio play failed:", e);
-            showAudioPermissionAlert();
-          }
-        }
-      }
-
-      // Fungsi untuk menghentikan alarm dan getaran
+      // Fungsi untuk menghentikan alarm
       function stopAlarm() {
         if (alarmSound) {
           alarmSound.pause();
           alarmSound.currentTime = 0;
           isAlarmPlaying = false;
         }
-        if (alarmInterval) {
-          clearInterval(alarmInterval);
-          alarmInterval = null;
+        if (alarmTimeout) {
+          clearTimeout(alarmTimeout);
+          alarmTimeout = null;
         }
       }
 
       function showAudioPermissionAlert() {
+        const alertId = "audio-permission-alert";
+        // Cek apakah alert sudah ada
+        if (document.getElementById(alertId)) {
+          return;
+        }
+
         const alert = document.createElement("div");
+        alert.id = alertId;
         alert.innerHTML = `
-                <div style="position: fixed; bottom: 20px; left: 20px; right: 20px; 
-                            background: #333; color: white; padding: 15px; 
+                <div style="position: fixed; bottom: 20px; left: 20px; right: 20px;
+                            background: #333; color: white; padding: 15px;
                             border-radius: 8px; z-index: 1000; text-align: center;">
                     <p>Tap here to enable sound notifications</p>
-                    <button style="background: #4CAF50; border: none; color: white; 
+                    <button style="background: #4CAF50; border: none; color: white;
                                 padding: 8px 16px; margin-top: 8px; border-radius: 4px;">
                         Enable Sound
                     </button>
@@ -1732,8 +1717,11 @@
         button.addEventListener("click", () => {
           // Coba mainkan suara setelah interaksi pengguna
           alarmSound.currentTime = 0;
+          alarmSound.volume = 1.0; // Pastikan volume normal
           alarmSound.play().catch((e) => console.error("Still can't play:", e));
-          document.body.removeChild(alert);
+          if (document.body.contains(alert)) {
+            document.body.removeChild(alert);
+          }
         });
 
         document.body.appendChild(alert);

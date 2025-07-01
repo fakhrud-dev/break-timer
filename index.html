@@ -887,189 +887,236 @@
   </head>
 
   <body class="work-mode">
-    <div class="particles" id="particles"></div>
+  <div class="particles" id="particles"></div>
 
+  <header>
+    <!-- Header berisi elemen-elemen yang biasanya ada di bagian atas halaman -->
     <div class="top-right-content">
       <div class="session-counter" id="session-counter">
         <span id="pomodoro-count">0</span> sessions
       </div>
 
-      <button class="shortcut-btn" id="shortcut-btn" title="Shortcut Guide">
+      <!-- Perbaikan: Tambahkan aria-label untuk tombol ikon yang tidak memiliki teks terlihat -->
+      <button
+        class="shortcut-btn"
+        id="shortcut-btn"
+        title="Shortcut Guide"
+        aria-label="Shortcut Guide"
+      >
         <i class="far fa-circle-question"></i>
       </button>
 
-      <button class="fullscreen-btn" id="fullscreen-btn">
+      <!-- Perbaikan: Tambahkan aria-label untuk tombol ikon yang tidak memiliki teks terlihat -->
+      <button
+        class="fullscreen-btn"
+        id="fullscreen-btn"
+        aria-label="Toggle Fullscreen"
+      >
         <i class="fas fa-expand"></i>
       </button>
     </div>
 
-    <div class="container">
-      <h1>Break Time</h1>
+    <!-- Judul utama aplikasi, biasanya juga di dalam header -->
+    <h1>Break Time</h1>
+  </header>
 
-      <div class="mode-selector">
-        <button class="mode-btn active" id="pomodoro-btn">Work</button>
-        <button class="mode-btn" id="short-break-btn">Short Break</button>
-        <button class="mode-btn" id="long-break-btn">Long Break</button>
-      </div>
+  <main class="container">
+    <!-- Main berisi konten utama dan unik dari halaman -->
+    <nav class="mode-selector" aria-label="Timer Modes">
+      <!-- Navigasi untuk mode timer -->
+      <button class="mode-btn active" id="pomodoro-btn">Work</button>
+      <button class="mode-btn" id="short-break-btn">Short Break</button>
+      <button class="mode-btn" id="long-break-btn">Long Break</button>
+    </nav>
 
-      <div class="circular-progress">
-        <svg class="progress-circle" viewBox="0 0 200 200">
-          <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
-          <circle
-            class="progress-circle-fill"
-            cx="100"
-            cy="100"
-            r="90"
-          ></circle>
-        </svg>
-        <div class="timer-inside-circle" id="timer">25:00</div>
-      </div>
-
-      <div class="controls">
-        <button class="btn btn-primary" id="start-btn">Start</button>
-        <button class="btn btn-secondary" id="reset-btn" disabled>Reset</button>
-      </div>
-
-      <div class="settings">
-        <button class="settings-btn" id="settings-btn">
-          <i class="fas fa-cog"></i>
-        </button>
-      </div>
+    <div class="circular-progress">
+      <svg class="progress-circle" viewBox="0 0 200 200">
+        <circle class="progress-circle-bg" cx="100" cy="100" r="90"></circle>
+        <circle
+          class="progress-circle-fill"
+          cx="100"
+          cy="100"
+          r="90"
+        ></circle>
+      </svg>
+      <div class="timer-inside-circle" id="timer">25:00</div>
     </div>
 
-    <!-- Shortcut Guide Modal -->
-    <div class="shortcut-modal" id="shortcut-modal">
-      <div class="shortcut-modal-content">
-        <div class="shortcut-modal-header">
-          <h2>Keyboard Shortcuts</h2>
-          <button class="close-shortcut" id="close-shortcut">×</button>
+    <div class="controls">
+      <button class="btn btn-primary" id="start-btn">Start</button>
+      <button class="btn btn-secondary" id="reset-btn" disabled>Reset</button>
+    </div>
+
+    <div class="settings">
+      <button class="settings-btn" id="settings-btn" aria-label="Open Settings">
+        <!-- Tambahkan aria-label untuk tombol ikon settings -->
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+  </main>
+  <!-- Akhir dari elemen main -->
+
+  <!-- Shortcut Guide Modal -->
+  <div
+    class="shortcut-modal"
+    id="shortcut-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="shortcut-modal-title"
+  >
+    <div class="shortcut-modal-content">
+      <div class="shortcut-modal-header">
+        <h2 id="shortcut-modal-title">Keyboard Shortcuts</h2>
+        <button class="close-shortcut" id="close-shortcut" aria-label="Close Shortcut Guide">×</button>
+        <!-- Tambahkan aria-label untuk tombol tutup modal -->
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-item">
+          <span>Start/Pause Timer</span>
+          <span class="shortcut-key">Space</span>
         </div>
-        <div class="shortcut-list">
-          <div class="shortcut-item">
-            <span>Start/Pause Timer</span>
-            <span class="shortcut-key">Space</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Reset Timer</span>
-            <span class="shortcut-key">R</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Work Mode</span>
-            <span class="shortcut-key">W</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Short Break</span>
-            <span class="shortcut-key">S</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Long Break</span>
-            <span class="shortcut-key">L</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Open Guide</span>
-            <span class="shortcut-key">G</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Open Settings</span>
-            <span class="shortcut-key">O</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Toggle Fullscreen</span>
-            <span class="shortcut-key">F</span>
-          </div>
-          <div class="shortcut-item">
-            <span>Close Popup</span>
-            <span class="shortcut-key">Esc</span>
-          </div>
+        <div class="shortcut-item">
+          <span>Reset Timer</span>
+          <span class="shortcut-key">R</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Work Mode</span>
+          <span class="shortcut-key">W</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Short Break</span>
+          <span class="shortcut-key">S</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Long Break</span>
+          <span class="shortcut-key">L</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Open Guide</span>
+          <span class="shortcut-key">G</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Open Settings</span>
+          <span class="shortcut-key">O</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Toggle Fullscreen</span>
+          <span class="shortcut-key">F</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Close Popup</span>
+          <span class="shortcut-key">Esc</span>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Modal yang muncul saat timer selesai -->
-    <div class="modal-overlay" id="modal-overlay">
-      <div class="modal">
-        <div class="coffee-icon">☕</div>
-        <h2 id="modal-title">Time's Up!</h2>
-        <p id="random-quote">"Take a break to sharpen your axe."</p>
-        <div class="progress-container">
-          <div class="progress-bar" id="modal-progress"></div>
-        </div>
-        <button class="btn btn-primary" id="modal-btn">Continue</button>
+  <!-- Modal yang muncul saat timer selesai -->
+  <div
+    class="modal-overlay"
+    id="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
+    <div class="modal">
+      <div class="coffee-icon">☕</div>
+      <h2 id="modal-title">Time's Up!</h2>
+      <p id="random-quote">"Take a break to sharpen your axe."</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="modal-progress"></div>
       </div>
+      <button class="btn btn-primary" id="modal-btn">Continue</button>
     </div>
+  </div>
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settings-modal">
-      <div class="settings-modal-content">
-        <div class="settings-modal-header">
-          <h2>Timer Settings</h2>
-          <button class="close-settings" id="close-settings">×</button>
-        </div>
-        <div class="form-group">
-          <label for="pomodoro-time">Work Time (minutes)</label>
-          <input
-            type="number"
-            id="pomodoro-time"
-            min="1"
-            max="240"
-            value="25"
-          />
-        </div>
-        <div class="form-group">
-          <label for="short-break-time">Short Break (minutes)</label>
-          <input
-            type="number"
-            id="short-break-time"
-            min="1"
-            max="30"
-            value="5"
-          />
-        </div>
-        <div class="form-group">
-          <label for="long-break-time">Long Break (minutes)</label>
-          <input
-            type="number"
-            id="long-break-time"
-            min="1"
-            max="120"
-            value="15"
-          />
-        </div>
+  <!-- Settings Modal -->
+  <div
+    class="settings-modal"
+    id="settings-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="settings-modal-title"
+  >
+    <div class="settings-modal-content">
+      <div class="settings-modal-header">
+        <h2 id="settings-modal-title">Timer Settings</h2>
+        <button class="close-settings" id="close-settings" aria-label="Close Settings Modal">×</button>
+        <!-- Tambahkan aria-label untuk tombol tutup modal -->
+      </div>
+      <div class="form-group">
+        <label for="pomodoro-time">Work Time (minutes)</label>
+        <input
+          type="number"
+          id="pomodoro-time"
+          min="1"
+          max="240"
+          value="25"
+        />
+      </div>
+      <div class="form-group">
+        <label for="short-break-time">Short Break (minutes)</label>
+        <input
+          type="number"
+          id="short-break-time"
+          min="1"
+          max="30"
+          value="5"
+        />
+      </div>
+      <div class="form-group">
+        <label for="long-break-time">Long Break (minutes)</label>
+        <input
+          type="number"
+          id="long-break-time"
+          min="1"
+          max="120"
+          value="15"
+        />
+      </div>
 
-        <div class="toggle-group">
-          <label class="toggle-label">
-            <span>Sound Notifications</span>
-            <label class="switch">
-              <input type="checkbox" id="sound-toggle" checked />
-              <span class="slider"></span>
-            </label>
+      <div class="toggle-group">
+        <!-- Perbaikan: Hapus label nested yang kosong dan gunakan label tunggal dengan 'for' -->
+        <label class="toggle-label" for="sound-toggle">
+          <span>Sound Notifications</span>
+          <span class="switch">
+            <input type="checkbox" id="sound-toggle" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <!-- Perbaikan: Hapus label nested yang kosong dan gunakan label tunggal dengan 'for' -->
+        <label class="toggle-label" for="auto-start">
+          <span>Auto-start next timer</span>
+          <span class="switch">
+            <input type="checkbox" id="auto-start" />
+            <span class="slider"></span>
           </label>
-        </div>
-
-        <div class="toggle-group">
-          <label class="toggle-label">
-            <span>Auto-start next timer</span>
-            <label class="switch">
-              <input type="checkbox" id="auto-start" />
-              <span class="slider"></span>
-            </label>
-          </label>
-        </div>
-
-        <button class="delete-session-btn" id="delete-session-btn">
-          Reset Session Count
-        </button>
-
-        <button class="save-btn" id="save-settings-btn">Save Settings</button>
+        </label>
       </div>
-    </div>
 
-    <audio id="alarm-sound" preload="auto">
-      <source src="sound.mp3" type="audio/mpeg" />
-    </audio>
-    <audio id="tick-sound" preload="auto">
-      <source src="sound.mp3" type="audio/mpeg" />
-    </audio>
+      <button class="delete-session-btn" id="delete-session-btn">
+        Reset Session Count
+      </button>
+
+      <button class="save-btn" id="save-settings-btn">Save Settings</button>
+    </div>
+  </div>
+
+  <audio id="alarm-sound" preload="auto" aria-describedby="alarm-description">
+    <source src="sound.mp3" type="audio/mpeg" />
+    <!-- Fallback content for browsers that don't support the audio tag -->
+    Your browser does not support the audio element.
+  </audio>
+  <p id="alarm-description" class="sr-only">Suara alarm berbunyi menandakan waktu habis.</p>
+
+  <audio id="tick-sound" preload="auto" aria-describedby="tick-description">
+    <source src="sound.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+  <p id="tick-description" class="sr-only">Suara detak singkat.</p>
 
     <script>
       // =============================================
@@ -1651,7 +1698,7 @@
             // Set timeout untuk menghentikan alarm setelah 10 detik
             alarmTimeout = setTimeout(() => {
               stopAlarm();
-            }, 10000); // 10 detik
+            }, 15000); // 10 detik
           } catch (e) {
             console.error("Audio play failed:", e);
             showAudioPermissionAlert();
